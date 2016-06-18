@@ -1,14 +1,15 @@
 package com.seri.web.utils.tags;
 
-import com.seri.web.dao.StandardDao;
-import com.seri.web.dao.daoImpl.STandardDaoImpl;
-import com.seri.web.model.Standard;
-import com.seri.web.utils.GlobalFunUtils;
+import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
-import java.io.IOException;
-import java.util.List;
+
+import com.seri.web.dao.StandardDao;
+import com.seri.web.dao.daoImpl.StandardDaoImpl;
+import com.seri.web.model.Standard;
+import com.seri.web.utils.GlobalFunUtils;
 
 /**
  * Created by puneet on 04/06/16.
@@ -16,7 +17,7 @@ import java.util.List;
 public class SandardListAncorTag extends SimpleTagSupport {
 
     private GlobalFunUtils globalFunUtils = new GlobalFunUtils();
-    private StandardDao standardDao = new STandardDaoImpl();
+    private StandardDao standardDao = new StandardDaoImpl();
 
     public void doTag() throws IOException {
         List<Standard> standardList = standardDao.getPrimaryStandard();

@@ -1,19 +1,20 @@
 package com.seri.web.utils.tags;
 
+import java.io.IOException;
+import java.util.List;
+
+import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.tagext.SimpleTagSupport;
+
 import com.seri.web.dao.SchoolDao;
 import com.seri.web.dao.StandardDao;
 import com.seri.web.dao.SubjectDao;
-import com.seri.web.dao.daoImpl.STandardDaoImpl;
 import com.seri.web.dao.daoImpl.SchoolDaoImpl;
+import com.seri.web.dao.daoImpl.StandardDaoImpl;
 import com.seri.web.dao.daoImpl.SubjectDaoImpl;
 import com.seri.web.model.Standard;
 import com.seri.web.model.Subject;
 import com.seri.web.utils.GlobalFunUtils;
-
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.tagext.SimpleTagSupport;
-import java.io.IOException;
-import java.util.List;
 
 /**
  * Created by puneet on 04/06/16.
@@ -26,7 +27,7 @@ public class SchoolStandardSubjectSelectTag extends SimpleTagSupport {
     private String selectedStandard;
     private String multi;
     private GlobalFunUtils globalFunUtils = new GlobalFunUtils();
-    private StandardDao standardDao = new STandardDaoImpl();
+    private StandardDao standardDao = new StandardDaoImpl();
     SchoolDao schoolDao = new SchoolDaoImpl();
     private SubjectDao subjectDao = new SubjectDaoImpl();
 

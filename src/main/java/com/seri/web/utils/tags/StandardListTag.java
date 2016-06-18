@@ -1,17 +1,17 @@
 package com.seri.web.utils.tags;
 
-import com.seri.web.dao.SchoolDao;
-import com.seri.web.dao.StandardDao;
-import com.seri.web.dao.daoImpl.STandardDaoImpl;
-import com.seri.web.dao.daoImpl.SchoolDaoImpl;
-import com.seri.web.model.School;
-import com.seri.web.model.Standard;
-import com.seri.web.utils.GlobalFunUtils;
+import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
-import java.io.IOException;
-import java.util.List;
+
+import com.seri.web.dao.SchoolDao;
+import com.seri.web.dao.StandardDao;
+import com.seri.web.dao.daoImpl.SchoolDaoImpl;
+import com.seri.web.dao.daoImpl.StandardDaoImpl;
+import com.seri.web.model.Standard;
+import com.seri.web.utils.GlobalFunUtils;
 
 /**
  * Created by puneet on 25/04/16.
@@ -22,7 +22,7 @@ public class StandardListTag extends SimpleTagSupport {
     private String selectedStandard;
     private String multi;
     private GlobalFunUtils globalFunUtils = new GlobalFunUtils();
-    private StandardDao standardDao = new STandardDaoImpl();
+    private StandardDao standardDao = new StandardDaoImpl();
     SchoolDao schoolDao = new SchoolDaoImpl();
 
     public void setCtrlName(String ctrlName) {

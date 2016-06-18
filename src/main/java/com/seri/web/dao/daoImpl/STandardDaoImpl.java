@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * Created by puneet on 28/05/16.
  */
-public class STandardDaoImpl implements StandardDao {
+public class StandardDaoImpl implements StandardDao {
     private GlobalFunUtils globalFunUtils = new GlobalFunUtils();
     @Override
     public Boolean create(Standard standard) {

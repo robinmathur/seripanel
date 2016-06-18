@@ -1,9 +1,11 @@
 package com.seri.web.controller;
 
-import com.seri.web.dao.*;
-import com.seri.web.dao.daoImpl.*;
-import com.seri.web.model.*;
-import com.seri.web.utils.GlobalFunUtils;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.json.simple.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -12,10 +14,33 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.seri.web.dao.HodDao;
+import com.seri.web.dao.ParentsDao;
+import com.seri.web.dao.SchoolDao;
+import com.seri.web.dao.StandardDao;
+import com.seri.web.dao.StudentDao;
+import com.seri.web.dao.SubjectDao;
+import com.seri.web.dao.SyllabusDao;
+import com.seri.web.dao.TeacherDao;
+import com.seri.web.dao.UserDao;
+import com.seri.web.dao.daoImpl.HodDaoImpl;
+import com.seri.web.dao.daoImpl.ParentsDaoImpl;
+import com.seri.web.dao.daoImpl.SchoolDaoImpl;
+import com.seri.web.dao.daoImpl.StandardDaoImpl;
+import com.seri.web.dao.daoImpl.StudentDaoImpl;
+import com.seri.web.dao.daoImpl.SubjectDaoImpl;
+import com.seri.web.dao.daoImpl.SyllabusDaoImpl;
+import com.seri.web.dao.daoImpl.TeacherDaoImpl;
+import com.seri.web.dao.daoImpl.UserDaoImpl;
+import com.seri.web.model.Hod;
+import com.seri.web.model.Parents;
+import com.seri.web.model.School;
+import com.seri.web.model.Student;
+import com.seri.web.model.Subject;
+import com.seri.web.model.Syllabus;
+import com.seri.web.model.Teacher;
+import com.seri.web.model.User;
+import com.seri.web.utils.GlobalFunUtils;
 
 /**
  * Created by puneet on 11/06/16.
@@ -28,7 +53,7 @@ public class TaskController {
     private SchoolDao schoolDao = new SchoolDaoImpl();
     private UserDao userDao = new UserDaoImpl();
     private SyllabusDao syllabusDao = new SyllabusDaoImpl();
-    private StandardDao standardDao = new STandardDaoImpl();
+    private StandardDao standardDao = new StandardDaoImpl();
     private HodDao hodDao = new HodDaoImpl();
     private TeacherDao teacherDao = new TeacherDaoImpl();
     private StudentDao studentDao = new StudentDaoImpl();

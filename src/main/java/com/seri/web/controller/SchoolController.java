@@ -1,15 +1,9 @@
 package com.seri.web.controller;
 
-import com.seri.web.dao.DepartmentDao;
-import com.seri.web.dao.SchoolDao;
-import com.seri.web.dao.StandardDao;
-import com.seri.web.dao.TeacherDao;
-import com.seri.web.dao.daoImpl.DepartmentDaoImpl;
-import com.seri.web.dao.daoImpl.STandardDaoImpl;
-import com.seri.web.dao.daoImpl.SchoolDaoImpl;
-import com.seri.web.dao.daoImpl.TeacherDaoImpl;
-import com.seri.web.model.*;
-import com.seri.web.utils.GlobalFunUtils;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,9 +11,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-import java.util.Map;
+import com.seri.web.dao.DepartmentDao;
+import com.seri.web.dao.SchoolDao;
+import com.seri.web.dao.StandardDao;
+import com.seri.web.dao.daoImpl.DepartmentDaoImpl;
+import com.seri.web.dao.daoImpl.SchoolDaoImpl;
+import com.seri.web.dao.daoImpl.StandardDaoImpl;
+import com.seri.web.model.Department;
+import com.seri.web.model.School;
+import com.seri.web.model.Standard;
+import com.seri.web.model.User;
+import com.seri.web.utils.GlobalFunUtils;
 
 /**
  * Created by puneet on 23/04/16.
@@ -30,7 +32,7 @@ public class SchoolController {
     private GlobalFunUtils globalFunUtils = new GlobalFunUtils();
     private SchoolDao schoolDao = new SchoolDaoImpl();
     private DepartmentDao departmentDao = new DepartmentDaoImpl();
-    private StandardDao standardDao = new STandardDaoImpl();
+    private StandardDao standardDao = new StandardDaoImpl();
 
     @RequestMapping(value = "/addschool**", method = RequestMethod.GET)
     public ModelAndView addSchoolPage(@ModelAttribute("schoolForm") School schoolForm) {
