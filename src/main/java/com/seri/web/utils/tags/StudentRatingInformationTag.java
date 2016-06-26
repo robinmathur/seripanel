@@ -11,6 +11,7 @@ import com.seri.web.utils.GlobalFunUtils;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,6 @@ import java.util.Map;
  * Created by puneet on 11/06/16.
  */
 public class StudentRatingInformationTag extends SimpleTagSupport {
-    private GlobalFunUtils globalFunUtils = new GlobalFunUtils();
     private RatingDao ratingDao = new RatingDaoImpl();
     private String studentId;
     private String entityName;
@@ -47,7 +47,10 @@ public class StudentRatingInformationTag extends SimpleTagSupport {
         params.put("studentId", studentId);
         params.put("entityId", entityId);
         params.put("entityName", entityName);
-        List<Rating> ratingList = ratingDao.getRatingRecUsingFilters(params, false);
+//        List<Rating> ratingList = ratingDao.getRatingRecUsingFilters(params, false);
+        Rating rateing = new Rating();
+        rateing.setRating(4);
+        List<Rating> ratingList =Arrays.asList(rateing);
         String retHtml = "";
         if(ratingList.size()>0){
             Rating rating = ratingList.get(0);

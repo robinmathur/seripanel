@@ -1,8 +1,10 @@
 package com.seri.web.dao;
 
-import com.seri.web.model.User;
-
 import java.util.List;
+
+import com.seri.security.Role;
+import com.seri.service.notification.RoleType;
+import com.seri.web.model.User;
 
 /**
  * Created by puneet on 04/04/16.
@@ -18,4 +20,5 @@ public interface UserDao {
     public List getUnregisterUser();
 
     public void update(User userDetails);
+    public Role getRoleByRoleName(RoleType role);
 }

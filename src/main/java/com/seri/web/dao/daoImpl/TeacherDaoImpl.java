@@ -43,7 +43,7 @@ public class TeacherDaoImpl implements TeacherDao {
         teacherDetails.settLoginId(teacher.gettLoginId());
 
         teacherDetails.setTeacherSchoolId(teacher.getTeacherSchoolId());
-        teacherDetails.setTeacherLoginId(teacher.getTeacherLoginId());
+        teacherDetails.setEmail(teacher.getEmail());
         teacherDetails.setTeacherStandardId(","+teacher.getTeacherStandardId()+",");
         teacherDetails.setfName(teacher.getfName());
         teacherDetails.setmName(teacher.getmName());
@@ -86,7 +86,7 @@ public class TeacherDaoImpl implements TeacherDao {
     }
 
     @Override
-    public Teacher getTeacherUsingTeacherId(int id) {
+    public Teacher getTeacherUsingTeacherId(long id) {
         EntityManager em = DbCon.getEntityManager();
         Query ui =  em.createQuery("select c from Teacher c where c.teacherId="+id);
         em.clear();
@@ -97,7 +97,7 @@ public class TeacherDaoImpl implements TeacherDao {
     }
 
     @Override
-    public Teacher getTeacherUsingLoginId(int loginId) {
+    public Teacher getTeacherUsingLoginId(long loginId) {
         EntityManager em = DbCon.getEntityManager();
         Query ui =  em.createQuery("select c from Teacher c where c.tLoginId="+loginId);
         em.clear();

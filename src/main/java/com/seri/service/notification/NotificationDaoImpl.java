@@ -2,42 +2,28 @@ package com.seri.service.notification;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import com.seri.common.dao.AbstractDao;
+import com.seri.web.model.User;
 import com.seri.web.utils.DbCon;
 
 @Repository("notificationDao")
-public class NotificationDaoImpl implements NotificationDao{
+public class NotificationDaoImpl extends AbstractDao<Notification> implements NotificationDao{
 	
-	@PersistenceContext
-    private EntityManager manager;
-
-	@Override
-	public void createEntityNotification(EntityNotifications entityNotification) {
-		manager.getTransaction().begin();
-		manager.persist(entityNotification);
-		manager.getTransaction().commit();
+	private Logger logger = LoggerFactory.getLogger(NotificationServiceImpl.class.getName());
+	
+	public NotificationDaoImpl() {
+		this.entityManager=DbCon.getEntityManager();
 	}
 
+
 	@Override
-	public void createGroupNotification(GroupNotifications groupNotification) {
-		manager = DbCon.getEntityManager();
-		manager.getTransaction().begin();
-		manager.persist(groupNotification);
-		manager.getTransaction().commit();
+	public List<Notification> getNotificationsForUser(User user) {
 		
-	}
-
-	@Override
-	public List<Notification> getNotificationForUser(long userID) {
-		manager = DbCon.getEntityManager();
-		Query query = manager.createQuery("select en.notification from EntityNotifications en where en.entityId=:userId",Notification.class);
-		query.setParameter("userId", userID);
-		List<Notification> notificationList = query.getResultList();
+		//TODO
 		return null;
 	}
 

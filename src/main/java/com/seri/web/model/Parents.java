@@ -1,21 +1,36 @@
 package com.seri.web.model;
 
-import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
+
+import com.seri.common.Gender;
 
 /**
  * Created by puneet on 30/04/16.
  */
 @Entity
 @Table(name = "PARENTS")
-public class Parents implements Serializable {
+@PrimaryKeyJoinColumn(name="PARENT_ID")
+public class Parents extends User implements Serializable {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name = "PARENT_ID")
     private int parentId;
-    @Column(name = "PARENT_LOGIN_ID")
-    private String parentLoginId;
+    @Column(name = "USER_ID")
+    private long userId;
+    @Column(name = "EMAIL")
+    private String email;
     @Column(name = "STUDENT_ID")
     private int studentId;
     @Column(name = "F_NAME")
@@ -29,7 +44,8 @@ public class Parents implements Serializable {
     @Column(name = "PHOTO")
     private String photo;
     @Column(name = "GENDER")
-    private String gender;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
     @Column(name = "f_occupation")
     private String fOccupation;
@@ -50,16 +66,16 @@ public class Parents implements Serializable {
     private String mMobNo;
 
     @Column(name = "monthly_income")
-    private String monthlyIncome;
+    private double monthlyIncome;
 
     @Column(name = "CREATED_BY")
-    private String createdBy;
+    private long createdBy;
     @Column(name = "CREATED_DATE")
-    private String createdDate;
+    private Date createdDate;
     @Column(name = "LAST_UPDATED_BY")
-    private String lastUpdatedBy;
+    private long lastUpdatedBy;
     @Column(name = "LAST_UPDATED_DATE")
-    private String lastUpdatedDate;
+    private Date lastUpdatedDate;
 
     public int getParentId() {
         return parentId;
@@ -69,15 +85,15 @@ public class Parents implements Serializable {
         this.parentId = parentId;
     }
 
-    public String getParentLoginId() {
-        return parentLoginId;
-    }
+    public String getEmail() {
+		return email;
+	}
 
-    public void setParentLoginId(String parentLoginId) {
-        this.parentLoginId = parentLoginId;
-    }
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
-    public int getStudentId() {
+	public int getStudentId() {
         return studentId;
     }
 
@@ -125,11 +141,11 @@ public class Parents implements Serializable {
         this.photo = photo;
     }
 
-    public String getGender() {
+    public Gender getGender() {
         return gender;
     }
 
-    public void setGender(String gender) {
+    public void setGender(Gender gender) {
         this.gender = gender;
     }
 
@@ -197,43 +213,53 @@ public class Parents implements Serializable {
         this.mMobNo = mMobNo;
     }
 
-    public String getMonthlyIncome() {
+    public double getMonthlyIncome() {
         return monthlyIncome;
     }
 
-    public void setMonthlyIncome(String monthlyIncome) {
+    public void setMonthlyIncome(double monthlyIncome) {
         this.monthlyIncome = monthlyIncome;
     }
 
-    public String getCreatedBy() {
+    public long getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(String createdBy) {
+    public void setCreatedBy(long createdBy) {
         this.createdBy = createdBy;
     }
 
-    public String getCreatedDate() {
+    public Date getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(String createdDate) {
+    public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
     }
 
-    public String getLastUpdatedBy() {
+    public long getLastUpdatedBy() {
         return lastUpdatedBy;
     }
 
-    public void setLastUpdatedBy(String lastUpdatedBy) {
+    public void setLastUpdatedBy(long lastUpdatedBy) {
         this.lastUpdatedBy = lastUpdatedBy;
     }
 
-    public String getLastUpdatedDate() {
+    public Date getLastUpdatedDate() {
         return lastUpdatedDate;
     }
 
-    public void setLastUpdatedDate(String lastUpdatedDate) {
+    public void setLastUpdatedDate(Date lastUpdatedDate) {
         this.lastUpdatedDate = lastUpdatedDate;
     }
+
+	public long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(long userId) {
+		this.userId = userId;
+	}
+    
+    
 }

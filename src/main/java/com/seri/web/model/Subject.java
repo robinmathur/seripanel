@@ -1,7 +1,14 @@
 package com.seri.web.model;
 
-import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * Created by puneet on 29/05/16.
@@ -27,13 +34,13 @@ public class Subject implements Serializable {
     @Column(name = "STATUS")
     private int status;
     @Column(name = "CREATED_BY")
-    private String createdBy;
+    private long createdBy;
     @Column(name = "CREATED_DATE")
-    private String createdDate;
+    private Date createdDate;
     @Column(name = "LAST_UPDATED_BY")
-    private String lastUpdatedBy;
+    private long lastUpdatedBy;
     @Column(name = "LAST_UPDATED_DATE")
-    private String lastUpdatedDate;
+    private Date lastUpdatedDate;
 
     public int getSubjectId() {
         return subjectId;
@@ -91,35 +98,35 @@ public class Subject implements Serializable {
         this.status = status;
     }
 
-    public String getCreatedBy() {
+    public long getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(String createdBy) {
+    public void setCreatedBy(long createdBy) {
         this.createdBy = createdBy;
     }
 
-    public String getCreatedDate() {
+    public Date getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(String createdDate) {
+    public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
     }
 
-    public String getLastUpdatedBy() {
+    public long getLastUpdatedBy() {
         return lastUpdatedBy;
     }
 
-    public void setLastUpdatedBy(String lastUpdatedBy) {
+    public void setLastUpdatedBy(long lastUpdatedBy) {
         this.lastUpdatedBy = lastUpdatedBy;
     }
 
-    public String getLastUpdatedDate() {
+    public Date getLastUpdatedDate() {
         return lastUpdatedDate;
     }
 
-    public void setLastUpdatedDate(String lastUpdatedDate) {
+    public void setLastUpdatedDate(Date lastUpdatedDate) {
         this.lastUpdatedDate = lastUpdatedDate;
     }
 }

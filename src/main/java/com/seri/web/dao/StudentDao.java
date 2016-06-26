@@ -1,11 +1,9 @@
 package com.seri.web.dao;
 
-import com.seri.web.model.School;
-import com.seri.web.model.Student;
-import com.seri.web.model.Teacher;
-
 import java.util.List;
 import java.util.Map;
+
+import com.seri.web.model.Student;
 
 /**
  * Created by puneet on 28/04/16.
@@ -16,9 +14,9 @@ public interface StudentDao {
 
     public boolean update(Student student);
 
-    public Student getStudentUsingStudentId(int id);
+    public Student getStudentUsingStudentId(long id);
 
-    public Student getStudentUsingStudentLogin(String login);
+    public Student getStudentUsingStudentLogin(long login);
 
     public List<Student> getStudentListUsingSchoolId(int schoolId);
 

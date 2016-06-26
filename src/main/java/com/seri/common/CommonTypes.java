@@ -1,14 +1,13 @@
-package com.seri.service.notification;
+package com.seri.common;
 
-public enum NotificationType {
-	
+public enum CommonTypes {
 	SYLLABUS("Syllabus"),
 	HOME_WORK("Home Work"),
 	CLASS_WORK("Class Work");
 	
 	private final String title;
 	
-	private NotificationType(final String title){
+	private CommonTypes(final String title){
 		this.title=title;
 	}
 

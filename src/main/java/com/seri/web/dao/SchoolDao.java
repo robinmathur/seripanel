@@ -17,8 +17,6 @@ public interface SchoolDao {
 
     public School getSchoolUsingEmail(String emailId);
 
-    public School getSchoolUsingPrincipalEmail(String emailId);
-
     public School getSchoolNotUsingSameEmail(String emailId, int schoolId);
 
     public School getSchoolUsingId(int id);
@@ -40,4 +38,6 @@ public interface SchoolDao {
     public List<School> getSchoolwithoutPrincipal();
 
     public List<School> getActiveSchools();
+
+	School getSchoolUsingPrincipal(long principalId);
 }

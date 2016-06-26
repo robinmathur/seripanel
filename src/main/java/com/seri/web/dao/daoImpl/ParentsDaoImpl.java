@@ -38,7 +38,7 @@ public class ParentsDaoImpl implements ParentsDao {
             globalFunUtils.inActiveAllTransaction(em);
             em.getTransaction().begin();
             Parents parents1 = em.find(Parents.class, parents.getParentId());
-            parents1.setParentLoginId(parents.getParentLoginId());
+            parents1.setEmail(parents.getEmail());
             parents1.setfName(parents.getfName());
             parents1.setlName(parents.getlName());
             parents1.setmName(parents.getmName());
@@ -75,9 +75,9 @@ public class ParentsDaoImpl implements ParentsDao {
     }
 
     @Override
-    public Parents getProfileUsingLoginId(String LoginId) {
+    public Parents getProfileUsingLoginId(long LoginId) {
         EntityManager em = DbCon.getEntityManager();
-        Query ui =  em.createQuery("select c from Parents c where c.parentLoginId='"+LoginId+"'");
+        Query ui =  em.createQuery("select c from Parents c where c.userId="+LoginId);
         em.clear();
         if(ui.getResultList().size()>0)
             return (Parents) ui.getResultList().get(0);
@@ -86,7 +86,7 @@ public class ParentsDaoImpl implements ParentsDao {
     }
 
     @Override
-    public Parents getProfileUsingParentsId(int parentsId) {
+    public Parents getProfileUsingParentsId(long parentsId) {
         try {
             EntityManager em = DbCon.getEntityManager();
             Query ui =  em.createQuery("select c from Parents c where c.parentId="+parentsId);

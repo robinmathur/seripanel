@@ -13,14 +13,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.seri.service.notification.RoleType;
 import com.seri.web.dao.SchoolDao;
 import com.seri.web.dao.StandardDao;
 import com.seri.web.dao.daoImpl.SchoolDaoImpl;
 import com.seri.web.dao.daoImpl.StandardDaoImpl;
 import com.seri.web.model.School;
 import com.seri.web.model.Standard;
-import com.seri.web.model.User;
-import com.seri.web.utils.GlobalFunUtils;
+import com.seri.web.utils.CalendarUtil;
+import com.seri.web.utils.LoggedUserUtil;
 
 /**
  * Created by puneet on 28/05/16.
@@ -29,14 +30,12 @@ import com.seri.web.utils.GlobalFunUtils;
 @RequestMapping(value = "standard")
 public class StandardController {
 
-    private GlobalFunUtils globalFunUtils = new GlobalFunUtils();
     private SchoolDao schoolDao = new SchoolDaoImpl();
     private StandardDao standardDao = new StandardDaoImpl();
 
     @RequestMapping(value = "/addstandard**", method = RequestMethod.GET)
     public ModelAndView addStandardPage(@ModelAttribute("standardForm") Standard standardForm) {
         ModelAndView model = new ModelAndView();
-        User sessUser = globalFunUtils.getLoggedInUserDetail();
         model.addObject("standardForm", standardForm);
         model.addObject("formAction", "standard/standardadd");
         model.setViewName("standard/add_update");
@@ -45,12 +44,10 @@ public class StandardController {
 
     @RequestMapping(value = "/standardadd**", method = RequestMethod.POST)
     public ModelAndView standardAddPage(@ModelAttribute("standardForm") Standard standardForm) {
-        User sessUser = globalFunUtils.getLoggedInUserDetail();
-        String dateTime = globalFunUtils.getDateTime();
-        standardForm.setLastUpdatedDate(dateTime);
-        standardForm.setLastUpdatedBy(sessUser.getLogin());
-        standardForm.setCreatedDate(dateTime);
-        standardForm.setCreatedBy(sessUser.getCreatedBy());
+        standardForm.setLastUpdatedDate(CalendarUtil.getDate());
+        standardForm.setLastUpdatedBy(LoggedUserUtil.getUserId());
+        standardForm.setCreatedDate(CalendarUtil.getDate());
+        standardForm.setCreatedBy(LoggedUserUtil.getUserId());
         standardForm.setStatus(1);
         standardDao.create(standardForm);
         return new ModelAndView("redirect:manage?added=true");
@@ -59,7 +56,6 @@ public class StandardController {
     @RequestMapping(value = "/update**", method = RequestMethod.GET)
     public ModelAndView editStandardPage(@ModelAttribute("standardForm") Standard standardForm, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
-        User sessUser = globalFunUtils.getLoggedInUserDetail();
         if(request.getParameter("id") == null)
             return new ModelAndView("redirect:manage?invalidselection=true");
 
@@ -74,10 +70,8 @@ public class StandardController {
 
     @RequestMapping(value = "/updatestandard**", method = RequestMethod.POST)
     public ModelAndView standardUpdatePage(@ModelAttribute("standardForm") Standard standardForm) {
-        User sessUser = globalFunUtils.getLoggedInUserDetail();
-        String dateTime = globalFunUtils.getDateTime();
-        standardForm.setLastUpdatedDate(dateTime);
-        standardForm.setLastUpdatedBy(sessUser.getLogin());
+        standardForm.setLastUpdatedDate(CalendarUtil.getDate());
+        standardForm.setLastUpdatedBy(LoggedUserUtil.getUserId());
         standardDao.update(standardForm);
         return new ModelAndView("redirect:manage?update=true");
     }
@@ -86,7 +80,6 @@ public class StandardController {
     @RequestMapping(value = "/manage**", method = RequestMethod.GET)
     public ModelAndView manageStandardPage(@ModelAttribute("schoolForm") School schoolForm) {
         ModelAndView model = new ModelAndView();
-        User sessUser = globalFunUtils.getLoggedInUserDetail();
         model.setViewName("standard/manage_standard");
         return model;
     }
@@ -99,7 +92,6 @@ public class StandardController {
         int offset = 0;
         String retHtml = "";
 
-        User sessUser = globalFunUtils.getLoggedInUserDetail();
         List<Standard> standardList = null;
         List<Standard> countStandardList = null;
         Map<String, Integer> params = new HashMap<String, Integer>();
@@ -120,8 +112,8 @@ public class StandardController {
         params.put("rpp", rpp);
 
 
-        if(sessUser.getRole().equals("ROLE_SCHOOL_ADMIN")) {
-            School school = schoolDao.getSchoolUsingPrincipalEmail(sessUser.getLogin());
+        if(LoggedUserUtil.hasRole(RoleType.ROLE_SCHOOL_ADMIN)) {
+            School school = schoolDao.getSchoolUsingPrincipal(LoggedUserUtil.getUserId());
             //params.put("schoolid", school.getSchoolId());
         }
 

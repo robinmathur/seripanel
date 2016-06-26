@@ -1,56 +1,79 @@
 <beans:beans xmlns="http://www.springframework.org/schema/security"
-	xmlns:beans="http://www.springframework.org/schema/beans" 
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
 	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 	http://www.springframework.org/schema/security
 	http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 
-	<http pattern="/resources/**" security="none"/>
+	<http pattern="/resources/**" security="none" />
 
 	<http use-expressions="true" disable-url-rewriting="true">
-		<intercept-url pattern="/school/addschool*" requires-channel="any" access="hasRole('ROLE_SUP_ADMIN') or hasRole('ROLE_SUB_ADMIN')" />
-		<intercept-url pattern="/school/manage*" access="hasRole('ROLE_SUP_ADMIN') or hasRole('ROLE_SUB_ADMIN')" />
+		<intercept-url pattern="/school/addschool*"
+			requires-channel="any"
+			access="hasRole('ROLE_SUP_ADMIN') or hasRole('ROLE_SUB_ADMIN')" />
+		<intercept-url pattern="/school/manage*"
+			access="hasRole('ROLE_SUP_ADMIN') or hasRole('ROLE_SUB_ADMIN')" />
 
-		<intercept-url pattern="/standard/manage*" access="hasRole('ROLE_SUP_ADMIN') or hasRole('ROLE_SUB_ADMIN')" />
-		<intercept-url pattern="/standard/addstandard*" access="hasRole('ROLE_SUP_ADMIN') or hasRole('ROLE_SUB_ADMIN')" />
+		<intercept-url pattern="/standard/manage*"
+			access="hasRole('ROLE_SUP_ADMIN') or hasRole('ROLE_SUB_ADMIN')" />
+		<intercept-url pattern="/standard/addstandard*"
+			access="hasRole('ROLE_SUP_ADMIN') or hasRole('ROLE_SUB_ADMIN')" />
 
-		<intercept-url pattern="/login**" access="isAnonymous()"/>
-		<intercept-url pattern="/createpassword/" access="isAnonymous()"/>
-		<intercept-url pattern="/**" requires-channel="any" access="isAuthenticated()" />
+		<intercept-url pattern="/login**" access="isAnonymous()" />
+		<intercept-url pattern="/createpassword/" access="isAnonymous()" />
+		<intercept-url pattern="/**" requires-channel="any"
+			access="isAuthenticated()" />
 
 
-		<form-login
-				login-page="/login" authentication-failure-handler-ref="SeriAuthenticationFailureHandler" authentication-success-handler-ref="SeriAuthenticationSuccessHandler"
-				authentication-failure-url="/login?error=true"
-				default-target-url="/admin"/>
+		<form-login login-page="/login"
+			authentication-failure-handler-ref="SeriAuthenticationFailureHandler"
+			authentication-success-handler-ref="roleBasedAuthenticationSuccessHandler"
+			authentication-failure-url="/login?error=true" default-target-url="/admin" />
 
-		<logout
-				invalidate-session="true"
-				logout-success-url="/login"
-				logout-url="/logout"/>
+		<logout invalidate-session="true" logout-success-url="/login"
+			logout-url="/logout" />
 	</http>
 
-	<!--<authentication-manager>
-		<authentication-provider>
-			<user-service>
-				<user name="admin" password="123456" authorities="ROLE_USER" />
-			</user-service>
-		</authentication-provider>
-	</authentication-manager>-->
+	<!--<authentication-manager> <authentication-provider> <user-service> <user 
+		name="admin" password="123456" authorities="ROLE_USER" /> </user-service> 
+		</authentication-provider> </authentication-manager> -->
 
 
 	<authentication-manager alias="authenticationManager">
-		<authentication-provider ref="customAuthenticationProvider"/>
+		<authentication-provider ref="customAuthenticationProvider" />
 	</authentication-manager>
-	<beans:bean id="customAuthenticationProvider" class="com.seri.web.security.LoginAuthProvider"/>
 
-	<beans:bean id="SeriAuthenticationSuccessHandler"
-				class="com.seri.web.security.SeriAuthenticationSuccessHandler">
 
+	<!-- <beans:bean id="customAuthenticationProvider" class="com.seri.web.security.LoginAuthProvider"/> -->
+
+	<!-- <beans:bean id="SeriAuthenticationSuccessHandler" class="com.seri.web.security.SeriAuthenticationSuccessHandler"> 
+		</beans:bean> -->
+
+	<beans:bean id="roleBasedAuthenticationSuccessHandler"
+		class="com.seri.security.RoleBasedAuthenticationSuccessHandler">
+		<beans:property name="roleUrlMap">
+			<beans:map>
+				<beans:entry key="ROLE_STUDENT" value="/student/dashboard"></beans:entry>
+				<beans:entry key="ROLE_PARENT" value="/parent/dashboard"></beans:entry>
+				<beans:entry key="ROLE_TEACHER" value="/teacher/dashboard"></beans:entry>
+				<beans:entry key="DEFAULT" value="/adduser"></beans:entry>
+			</beans:map>
+		</beans:property>
 	</beans:bean>
+
+	<beans:bean name="methodInvokingFactoryBean"
+		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<beans:property name="staticMethod"
+			value="com.seri.service.notification.NotificatiobServiceAdaptor.setNotificationService" />
+		<beans:property name="arguments">
+			<beans:list>
+				<beans:ref bean="notificationService" />
+			</beans:list>
+		</beans:property>
+	</beans:bean>
+
 	<beans:bean id="SeriAuthenticationFailureHandler"
-				class="com.seri.web.security.SeriAuthenticationFailureHandle">
+		class="com.seri.web.security.SeriAuthenticationFailureHandle">
 	</beans:bean>
 
 </beans:beans>

@@ -47,7 +47,7 @@ public class StandardListTag extends SimpleTagSupport {
         String selectCtrl = "<select name='"+ctrlName+"' id='"+ctrlName+"'><option value='0'>-SELECT STANDARD-</option>";
         if(multi!=null && multi.equals("true"))
             selectCtrl = "<select name='"+ctrlName+"' id='"+ctrlName+"' multiple='multiple'>";
-        if(standardList.size()>0) {
+        if(standardList !=null  & standardList.size()>0) {
             for (Standard standard:standardList) {
                 selectCtrl += "<option value='"+standard.getStandardId()+"' "+((Integer.parseInt(selectedStandard)==standard.getStandardId())?"selected='selected'":"")+">"+standard.getStandardName()+"</option>";
             }

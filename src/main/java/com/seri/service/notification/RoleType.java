@@ -1,7 +1,6 @@
 package com.seri.service.notification;
 
-public enum Roles {
-	
+public enum RoleType{
 	ROLE_SUP_ADMIN,
 	ROLE_SUB_ADMIN,
 	ROLE_SCHOOL_ADMIN,
@@ -9,5 +8,6 @@ public enum Roles {
 	ROLE_STUDENT,
 	ROLE_PARENT,
 	ROLE_HOD,
-	ROLE_ALUMNI;
+	ROLE_ALUMNI,
+	ROLE_RATING;
 }

@@ -1,8 +1,15 @@
 package com.seri.web.model;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 /**
  * Created by puneet on 23/04/16.
@@ -17,8 +24,8 @@ public class School implements Serializable {
     @NotNull
     @Column(name = "SCHOOL_NAME")
     private String schoolName;
-    @Column(name = "PRINCIPAL_USER_LOGIN")
-    private String principalUserLogin;
+    @Column(name = "PRINCIPAL")
+    private long principal;
     @Column(name = "SCHOOL_ADDRESS")
     private String schoolAddress;
     @Column(name = "COUNTRY")
@@ -32,13 +39,13 @@ public class School implements Serializable {
     @Column(name = "STATUS")
     private int status;
     @Column(name = "CREATED_BY")
-    private String createdBy;
+    private long createdBy;
     @Column(name = "CREATED_DATE")
-    private String createdDate;
+    private Date createdDate;
     @Column(name = "LAST_UPDATED_BY")
-    private String lastUpdatedBy;
+    private long lastUpdatedBy;
     @Column(name = "LAST_UPDATED_DATE")
-    private String lastUpdatedDate;
+    private Date lastUpdatedDate;
 
     public int getSchoolId() {
         return schoolId;
@@ -56,15 +63,16 @@ public class School implements Serializable {
         this.schoolName = schoolName;
     }
 
-    public String getPrincipalUserLogin() {
-        return principalUserLogin;
-    }
 
-    public void setPrincipalUserLogin(String principalUserLogin) {
-        this.principalUserLogin = principalUserLogin;
-    }
+    public long getPrincipal() {
+		return principal;
+	}
 
-    public String getSchoolAddress() {
+	public void setPrincipal(long principal) {
+		this.principal = principal;
+	}
+
+	public String getSchoolAddress() {
         return schoolAddress;
     }
 
@@ -112,35 +120,35 @@ public class School implements Serializable {
         this.status = status;
     }
 
-    public String getCreatedBy() {
+    public long getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(String createdBy) {
+    public void setCreatedBy(long createdBy) {
         this.createdBy = createdBy;
     }
 
-    public String getCreatedDate() {
+    public Date getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(String createdDate) {
+    public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
     }
 
-    public String getLastUpdatedBy() {
+    public long getLastUpdatedBy() {
         return lastUpdatedBy;
     }
 
-    public void setLastUpdatedBy(String lastUpdatedBy) {
+    public void setLastUpdatedBy(long lastUpdatedBy) {
         this.lastUpdatedBy = lastUpdatedBy;
     }
 
-    public String getLastUpdatedDate() {
+    public Date getLastUpdatedDate() {
         return lastUpdatedDate;
     }
 
-    public void setLastUpdatedDate(String lastUpdatedDate) {
+    public void setLastUpdatedDate(Date lastUpdatedDate) {
         this.lastUpdatedDate = lastUpdatedDate;
     }
 }

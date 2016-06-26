@@ -1,19 +1,45 @@
 package com.seri.web.controller;
 
-import com.seri.web.dao.*;
-import com.seri.web.dao.daoImpl.*;
-import com.seri.web.model.*;
-import com.seri.web.utils.GlobalFunUtils;
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Date;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
+import com.seri.common.Gender;
+import com.seri.common.GenderPropertyEditorSupport;
+import com.seri.common.MyCustomNumberEditor;
+import com.seri.common.RoleTypePropertyEditorSupport;
+import com.seri.service.notification.RoleType;
+import com.seri.web.dao.HodDao;
+import com.seri.web.dao.ParentsDao;
+import com.seri.web.dao.SchoolDao;
+import com.seri.web.dao.StudentDao;
+import com.seri.web.dao.daoImpl.HodDaoImpl;
+import com.seri.web.dao.daoImpl.ParentsDaoImpl;
+import com.seri.web.dao.daoImpl.SchoolDaoImpl;
+import com.seri.web.dao.daoImpl.StudentDaoImpl;
+import com.seri.web.dao.daoImpl.TeacherDaoImpl;
+import com.seri.web.dao.daoImpl.UserDaoImpl;
+import com.seri.web.model.Hod;
+import com.seri.web.model.Parents;
+import com.seri.web.model.School;
+import com.seri.web.model.Student;
+import com.seri.web.model.Teacher;
+import com.seri.web.model.User;
+import com.seri.web.utils.CalendarUtil;
+import com.seri.web.utils.LoggedUserUtil;
 
 /**
  * Created by puneet on 04/04/16.
@@ -21,7 +47,6 @@ import java.security.NoSuchAlgorithmException;
 @Controller
 public class UriController {
 
-    private GlobalFunUtils globalFunUtils = new GlobalFunUtils();
     private UserController userController = new UserController();
     private TeacherController teacherController = new TeacherController();
     private StudentController studentController = new StudentController();
@@ -33,6 +58,19 @@ public class UriController {
     private StudentDao studentDao = new StudentDaoImpl();
     private ParentsDao parentsDao = new ParentsDaoImpl();
     private HodDao hodDao = new HodDaoImpl();
+    
+    @InitBinder
+    public void initBinder(WebDataBinder binder)
+    {
+    	// true passed to CustomDateEditor constructor means convert empty String to null
+    	binder.registerCustomEditor(Date.class, new CustomDateEditor(CalendarUtil.getSystemDateFormat(), true));
+        binder.registerCustomEditor(RoleType.class, new RoleTypePropertyEditorSupport());
+        binder.registerCustomEditor(Gender.class, new GenderPropertyEditorSupport());
+        binder.registerCustomEditor(float.class, new MyCustomNumberEditor(Float.class));
+        binder.registerCustomEditor(long.class, new MyCustomNumberEditor(Long.class));
+        binder.registerCustomEditor(int.class, new MyCustomNumberEditor(Integer.class));
+        binder.registerCustomEditor(double.class, new MyCustomNumberEditor(Double.class));
+    } 
 
     @RequestMapping(value = "/login**", method = RequestMethod.GET)
     public ModelAndView loginPage() {
@@ -51,61 +89,61 @@ public class UriController {
 
     @RequestMapping(value = "/addadmin**", method = RequestMethod.POST)
     @ResponseBody
-    public ModelAndView adminAdd(@ModelAttribute("userForm") User userForm, @ModelAttribute("schoolForm") School schoolForm, @ModelAttribute("studentForm") Student studentForm, @ModelAttribute("teacherForm") Teacher teacherForm, @ModelAttribute("parentsForm") Parents parentsForm, @ModelAttribute("hodForm") Hod hodForm, HttpServletRequest request) throws IOException, NoSuchAlgorithmException {
+    public ModelAndView adminAdd(@RequestParam("role") RoleType roleType, @ModelAttribute("userForm") User userForm, @ModelAttribute("schoolForm") School schoolForm, @ModelAttribute("studentForm") Student studentForm, @ModelAttribute("teacherForm") Teacher teacherForm, @ModelAttribute("parentsForm") Parents parentsForm, @ModelAttribute("hodForm") Hod hodForm, HttpServletRequest request) throws IOException, NoSuchAlgorithmException {
         ModelAndView model = new ModelAndView();
-        User sessUser = globalFunUtils.getLoggedInUserDetail();
         if(userController.createUser(userForm, request))
         {
 
-            if(userForm.getRole().equals("ROLE_SCHOOL_ADMIN")) {
+            if(RoleType.ROLE_SCHOOL_ADMIN.equals(roleType)) {
 
                 School school = schoolDao.getSchoolUsingId(schoolForm.getSchoolId());
-                school.setPrincipalUserLogin(userForm.getLogin());
-                school.setLastUpdatedBy(sessUser.getLogin());
-                school.setLastUpdatedDate(globalFunUtils.getDateTime());
+                school.setPrincipal(LoggedUserUtil.getUserId());
+                school.setLastUpdatedBy(LoggedUserUtil.getUserId());
+                school.setLastUpdatedDate(CalendarUtil.getDate());
                 schoolDao.update(school);
 
-            } else if(userForm.getRole().equals("ROLE_STUDENT")) {
+            } else if(RoleType.ROLE_STUDENT.equals(roleType)) {
 
-                studentForm.setStudentLoginId(userForm.getLogin());
-                studentForm.setUserId(userForm.getUserId());
-                studentForm.setCreatedBy(sessUser.getLogin());
-                studentForm.setLastUpdatedBy(sessUser.getLogin());
-                studentForm.setLastUpdatedDate(globalFunUtils.getDateTime());
-                studentForm.setCreatedDate(globalFunUtils.getDateTime());
+                studentForm.setEmail(userForm.getEmail());
+                studentForm.setUserId(userForm.getId());
+                studentForm.setCreatedBy(LoggedUserUtil.getUserId());
+                studentForm.setLastUpdatedBy(LoggedUserUtil.getUserId());
+                studentForm.setLastUpdatedDate(CalendarUtil.getDate());
+                studentForm.setCreatedDate(CalendarUtil.getDate());
                 studentDao.create(studentForm);
 
-            } else if(userForm.getRole().equals("ROLE_TEACHER")) {
+            } else if(RoleType.ROLE_TEACHER.equals(roleType)) {
 
-                teacherForm.setTeacherLoginId(userForm.getLogin());
+                teacherForm.setEmail(userForm.getEmail());
                 teacherForm.setTeacherStandardId(","+teacherForm.getTeacherStandardId()+",");
-                teacherForm.settLoginId(userForm.getUserId());
-                teacherForm.settCreatedBy(sessUser.getLogin());
-                teacherForm.settLastUpdateBy(sessUser.getLogin());
-                teacherForm.settLastUpdateDate(globalFunUtils.getDateTime());
-                teacherForm.settCreatedDate(globalFunUtils.getDateTime());
+                teacherForm.settLoginId(userForm.getId());
+                teacherForm.settCreatedBy(LoggedUserUtil.getUserId());
+                teacherForm.settLastUpdateBy(LoggedUserUtil.getUserId());
+                teacherForm.settLastUpdateDate(CalendarUtil.getDate());
+                teacherForm.settCreatedDate(CalendarUtil.getDate());
                 teacherDao.create(teacherForm);
 
-            }  else if(userForm.getRole().equals("ROLE_PARENT")) {
-
-                parentsForm.setParentLoginId(userForm.getLogin());
-                parentsForm.setCreatedBy(sessUser.getLogin());
-                parentsForm.setLastUpdatedBy(sessUser.getLogin());
-                parentsForm.setLastUpdatedDate(globalFunUtils.getDateTime());
-                parentsForm.setCreatedDate(globalFunUtils.getDateTime());
+            }  else if(RoleType.ROLE_PARENT.equals(roleType)) {
+            	parentsForm.setUserId(userForm.getId());
+                parentsForm.setEmail(userForm.getEmail());
+                parentsForm.setCreatedBy(LoggedUserUtil.getUserId());
+                parentsForm.setLastUpdatedBy(LoggedUserUtil.getUserId());
+                parentsForm.setLastUpdatedDate(CalendarUtil.getDate());
+                parentsForm.setCreatedDate(CalendarUtil.getDate());
                 parentsDao.create(parentsForm);
 
                 Student student = studentDao.getStudentUsingStudentId(parentsForm.getStudentId());
-                student.setParentLoginId(userForm.getLogin());
+                student.setParentId(userForm.getId());
                 studentDao.update(student);
 
-            } else if(userForm.getRole().equals("ROLE_HOD")) {
-                hodForm.setHodLoginId(userForm.getLogin());
-                hodForm.setHodUserId(userForm.getUserId());
-                hodForm.setCreatedBy(sessUser.getLogin());
-                hodForm.setLastUpdatedBy(sessUser.getLogin());
-                hodForm.setLastUpdatedDate(globalFunUtils.getDateTime());
-                hodForm.setCreatedDate(globalFunUtils.getDateTime());
+            } else if(RoleType.ROLE_HOD.equals(roleType)) {
+            	hodForm.setHodUserId(userForm.getId());
+                hodForm.setEmail(userForm.getEmail());
+                hodForm.setEmail(userForm.getEmail());
+                hodForm.setCreatedBy(LoggedUserUtil.getUserId());
+                hodForm.setLastUpdatedBy(LoggedUserUtil.getUserId());
+                hodForm.setLastUpdatedDate(CalendarUtil.getDate());
+                hodForm.setCreatedDate(CalendarUtil.getDate());
                 hodDao.create(hodForm);
             }
             return new ModelAndView("redirect:adduser?token=success&");
@@ -149,41 +187,40 @@ public class UriController {
     @RequestMapping(value = "/updateprofile**", method = RequestMethod.GET)
     public ModelAndView updateUserPage() {
         ModelAndView model = new ModelAndView();
-        User sessUser = globalFunUtils.getLoggedInUserDetail();
-        model.addObject("userForm", sessUser);
-        if(sessUser.getRole().equals("ROLE_SUP_ADMIN"))
+        model.addObject("userForm", LoggedUserUtil.getUser());
+        if(LoggedUserUtil.hasRole(RoleType.ROLE_SUP_ADMIN))
         {
             model.addObject("formAction", "adminUpdate");
         }
-        else if(sessUser.getRole().equals("ROLE_SUB_ADMIN"))
+        else if(LoggedUserUtil.hasRole(RoleType.ROLE_SUB_ADMIN))
         {
             model.addObject("formAction", "adminUpdate");
         }
-        else if(sessUser.getRole().equals("ROLE_SCHOOL_ADMIN"))
+        else if(LoggedUserUtil.hasRole(RoleType.ROLE_SCHOOL_ADMIN))
         {
             model.addObject("formAction", "schoolUpdate");
         }
-        else if(sessUser.getRole().equals("ROLE_TEACHER"))
+        else if(LoggedUserUtil.hasRole(RoleType.ROLE_TEACHER))
         {
-            Teacher teacherProfile = teacherDao.getTeacherUsingLoginId(sessUser.getUserId());
+            Teacher teacherProfile = teacherDao.getTeacherUsingLoginId(LoggedUserUtil.getUserId());
             model.addObject("teacher", teacherProfile);
             model.addObject("formAction", "teacherUpdate");
         }
-        else if(sessUser.getRole().equals("ROLE_HOD"))
+        else if(LoggedUserUtil.hasRole(RoleType.ROLE_HOD))
         {
-            Hod hodProfile = hodDao.getHodByLoginId(sessUser.getLogin());
+            Hod hodProfile = hodDao.getHodByHodId(LoggedUserUtil.getUserId());
             model.addObject("hodForm", hodProfile);
             model.addObject("formAction", "hodUpdate");
         }
-        else if(sessUser.getRole().equals("ROLE_STUDENT"))
+        else if(LoggedUserUtil.hasRole(RoleType.ROLE_STUDENT))
         {
-            Student studentProfile = studentDao.getStudentUsingStudentLogin(sessUser.getLogin());
+            Student studentProfile = studentDao.getStudentUsingStudentId(LoggedUserUtil.getUserId());
             model.addObject("studentForm", studentProfile);
             model.addObject("formAction", "studentUpdate");
         }
-        else if(sessUser.getRole().equals("ROLE_PARENT"))
+        else if(LoggedUserUtil.hasRole(RoleType.ROLE_PARENT))
         {
-            Parents parents = parentsDao.getProfileUsingLoginId(sessUser.getLogin());
+            Parents parents = parentsDao.getProfileUsingLoginId(LoggedUserUtil.getUserId());
             model.addObject("parentsForm", parents);
             model.addObject("formAction", "parentUpdate");
         }
@@ -193,12 +230,12 @@ public class UriController {
 
     @RequestMapping(value = "/teacherUpdate**", method = RequestMethod.POST)
     public ModelAndView teacherUpdate(@ModelAttribute("teacher") Teacher teacher, @ModelAttribute("userForm") User user, HttpServletRequest request) {
-        User sessUser = globalFunUtils.getLoggedInUserDetail();
+        User sessUser = LoggedUserUtil.getUser();
         sessUser = userController.setFormAttributes(sessUser, user);
         userDao.update(sessUser);
 
         teacherController.addUpdate(teacher, sessUser);
-        if(sessUser.getRole().equals("ROLE_TEACHER"))
+        if(LoggedUserUtil.hasRole(RoleType.ROLE_TEACHER))
             return new ModelAndView("redirect:updateprofile?token=success&");
         else
             return new ModelAndView("redirect:teacher/manage?token=success&p="+request.getParameter("p")+"&rpp="+request.getParameter("rpp"));
@@ -206,23 +243,21 @@ public class UriController {
 
     @RequestMapping(value = "/adminUpdate**", method = RequestMethod.POST)
     public ModelAndView adminUpdate(@ModelAttribute("userForm") User user) {
-        User sessUser = globalFunUtils.getLoggedInUserDetail();
+        User sessUser = LoggedUserUtil.getUser();
         sessUser = userController.setFormAttributes(sessUser, user);
-        sessUser.setLastUpdatedBy(sessUser.getLogin());
+        sessUser.setLastUpdatedBy(LoggedUserUtil.getUserId());
         userDao.update(sessUser);
         return new ModelAndView("redirect:updateprofile?token=success&");
     }
 
     @RequestMapping(value = "/studentUpdate**", method = RequestMethod.POST)
     public ModelAndView studentUpdate(@ModelAttribute("studentForm") Student student, @ModelAttribute("userForm") User user, HttpServletRequest request) {
-        User updateUser = userDao.getUserUsingEmail(user.getLogin());
+        User updateUser = userDao.getUserUsingEmail(user.getEmail());
         updateUser = userController.setFormAttributes(updateUser, user);
         userDao.update(updateUser);
 
-        User sessUser = globalFunUtils.getLoggedInUserDetail();
-
         studentController.addUpdate(student);
-        if(sessUser.getRole().equals("ROLE_STUDENT"))
+        if(LoggedUserUtil.hasRole(RoleType.ROLE_STUDENT))
             return new ModelAndView("redirect:updateprofile?token=success&");
         else
             return new ModelAndView("redirect:student/manage?token=success&p="+request.getParameter("p")+"&rpp="+request.getParameter("rpp"));
@@ -230,13 +265,12 @@ public class UriController {
 
     @RequestMapping(value = "/hodUpdate**", method = RequestMethod.POST)
     public ModelAndView hodUpdate(@ModelAttribute("hodForm") Hod hod, @ModelAttribute("userForm") User user, HttpServletRequest request) {
-        User sessUser = globalFunUtils.getLoggedInUserDetail();
-        User updateUser = userDao.getUserUsingEmail(user.getLogin());
+        User updateUser = userDao.getUserUsingEmail(user.getEmail());
         updateUser = userController.setFormAttributes(updateUser, user);
         userDao.update(updateUser);
 
         hodController.addUpdate(hod);
-        if(sessUser.getRole().equals("ROLE_HOD"))
+        if(LoggedUserUtil.hasRole(RoleType.ROLE_HOD))
             return new ModelAndView("redirect:updateprofile?token=success&");
         else
             return new ModelAndView("redirect:hod/manage?token=success&schoolid="+hod.getHodSchoolId()+"&p="+request.getParameter("p")+"&rpp="+request.getParameter("rpp"));
@@ -244,21 +278,19 @@ public class UriController {
 
     @RequestMapping(value = "/parentUpdate**", method = RequestMethod.POST)
     public ModelAndView parentUpdate(@ModelAttribute("parentsForm") Parents parents, @ModelAttribute("userForm") User user, HttpServletRequest request) {
-        User sessUser = globalFunUtils.getLoggedInUserDetail();
-        User updateUser = userDao.getUserUsingEmail(user.getLogin());
+        User updateUser = userDao.getUserUsingEmail(user.getEmail());
         updateUser = userController.setFormAttributes(updateUser, user);
         userDao.update(updateUser);
 
-        String dateTime = globalFunUtils.getDateTime();
         parents.setGender(updateUser.getGender());
-        parents.setLastUpdatedBy(sessUser.getLogin());
-        parents.setLastUpdatedDate(dateTime);
-        parents.setParentLoginId(updateUser.getLogin());
+        parents.setLastUpdatedBy(LoggedUserUtil.getUserId());
+        parents.setLastUpdatedDate(CalendarUtil.getDate());
+        parents.setEmail(updateUser.getEmail());
 
         parentsDao.update(parents);
 
         //hodController.addUpdate(hod);
-        if(sessUser.getRole().equals("ROLE_PARENT"))
+        if(LoggedUserUtil.hasRole(RoleType.ROLE_PARENT))
             return new ModelAndView("redirect:updateprofile?token=success&");
         else
             return new ModelAndView("redirect:student/manage?token=success&schoolid="+request.getParameter("schoolid")+"&p="+request.getParameter("p")+"&rpp="+request.getParameter("rpp"));

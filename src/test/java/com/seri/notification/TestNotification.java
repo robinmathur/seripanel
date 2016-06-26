@@ -1,6 +1,6 @@
 package com.seri.notification;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -10,11 +10,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.seri.service.notification.NotificationService;
-import com.seri.service.notification.NotificationType;
-import com.seri.web.utils.CalendarUtil;
+
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"classpath:applicationContext.xml","classpath:spring-security.xml"})
+@ContextConfiguration(locations={"classpath:applicationContext.xml"})
 public class TestNotification {
 	
 	@Autowired
@@ -23,12 +22,13 @@ public class TestNotification {
 	@Test
 	@Ignore
 	public void testGetUserNotification() {
-		notificationService.getNotificationForUser(2232);
+//		notificationService.getNotificationForUser(2232);
 		fail("Not yet implemented");
 	}
 	@Test
+	@Ignore
 	public void createEntityNotification(){
-		notificationService.createNotification(NotificationType.CLASS_WORK, 7, CalendarUtil.addDays(32));
+//		notificationService.createNotification(NotificationType.CLASS_WORK, 7, CalendarUtil.addDays(32));
 	}
 
 }

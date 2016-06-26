@@ -18,7 +18,7 @@
             <div class="par control-group ${emailErrClass}">
                 <label for="login" class="control-label">Email Id</label>
                 <div class="controls">
-                    <input type="text" class="span4 " id="login" name="login" readonly="readonly" value="${userForm.login}" placeholder="Enter Email Id">
+                    <input type="text" class="span4 " id="email" name="email" readonly="readonly" value="${userForm.email}" placeholder="Enter Email Id">
                     <span class="help-inline">${emailErrrrMsg}</span>
                 </div>
             </div><!--par-->
@@ -59,7 +59,7 @@
                 <label>Gender</label>
                 <span class="formwrapper">
                     <c:choose>
-                        <c:when test="${userForm.gender.equals('male')}">
+                        <c:when test="${userForm.gender == 'MALE'}">
                             <input type="radio" name="gender" value="male" checked disabled="disabled" /> Male &nbsp; &nbsp;
                             <input type="radio" name="gender" value="female" disabled /> Female
                         </c:when>
@@ -106,7 +106,7 @@
             <div class="par control-group">
                 <label for="fOccupation" class="control-label">Monthly Income</label>
                 <div class="controls">
-                    <input type="text" class="span4" id="monthlyIncome" name="monthlyIncome" value="${parentsForm.monthlyIncome}" placeholder="Enter Monthly Income">
+                    <input type="text" class="span4" id="monthlyIncome" name="monthlyIncome" value="<fmt:formatNumber type="number" value="${parentsForm.monthlyIncome}" />" placeholder="Enter Monthly Income">
                     <span class="help-inline"></span>
                 </div>
             </div><!--par-->

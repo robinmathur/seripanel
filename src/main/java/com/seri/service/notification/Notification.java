@@ -2,114 +2,65 @@ package com.seri.service.notification;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.seri.common.BaseEntity;
+import com.seri.common.CommonTypes;
 
 @Entity
 @Table(name="NOTIFICATION")
-public class Notification implements Serializable,Comparable<Notification> {
+public class Notification extends BaseEntity implements Serializable,Comparable<Notification> {
 	
-	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="ID")
-	private long id;
+	@Column(name="ENTITY_ID")
+	private long entityId;
+	@Column(name="GROUP_TYPE")
+	@Enumerated(EnumType.STRING)
+	private RoleType groupType;
+	@Column(name="STANDARD")
+	private long standardId;
+	@Column(name="SCHOOL")
+	private long schoolId;
 	@Column(name="NOTI_TYPE")
-	@Enumerated(EnumType.ORDINAL)
-	private NotificationType notificationType;
-	@Column(name="CREATED_DATE")
-	private Date createdDate;
-	@Column(name="CREATED_BY")
-	private long createdBy;
+	@Enumerated(EnumType.STRING)
+	private CommonTypes notificationType;
 	@Column(name="LINKED_ENTITY")
 	private long linkedEntity;
 	@Column(name="LINKED_ENTITY_ROLE")
 	@Enumerated(EnumType.STRING)
-	private Roles linkedEntityRole;
+	private RoleType linkedEntityRole;
 	@Column(name="DUE_DATE")
 	private Date dueDate;
-	
-	@OneToMany(mappedBy="notification")
-	private List<GroupNotifications> groupNotifications;
-	
-	@OneToMany(mappedBy="notification")
-	private List<EntityNotifications> entityNotifications;
 
-	public long getId() {
-		return id;
-	}
 
-	public NotificationType getNotificationType() {
+	public CommonTypes getNotificationType() {
 		return notificationType;
-	}
-
-	public Date getCreatedDate() {
-		return createdDate;
-	}
-
-	public long getCreatedBy() {
-		return createdBy;
 	}
 
 	public long getLinkedEntity() {
 		return linkedEntity;
 	}
 
-	public List<GroupNotifications> getGroupNotifications() {
-		return groupNotifications;
-	}
-
-	public List<EntityNotifications> getEntityNotifications() {
-		return entityNotifications;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public void setNotificationType(NotificationType notificationType) {
+	public void setNotificationType(CommonTypes notificationType) {
 		this.notificationType = notificationType;
 	}
 
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}
-
-	public void setCreatedBy(long createdBy) {
-		this.createdBy = createdBy;
-	}
 
 	public void setLinkedEntity(long linkedEntity) {
 		this.linkedEntity = linkedEntity;
 	}
 
-	public void setGroupNotifications(List<GroupNotifications> groupNotifications) {
-		this.groupNotifications = groupNotifications;
-	}
-
-	public void setEntityNotifications(List<EntityNotifications> entityNotifications) {
-		this.entityNotifications = entityNotifications;
-	}
-
-	public Roles getLinkedEntityRole() {
+	public RoleType getLinkedEntityRole() {
 		return linkedEntityRole;
 	}
 
-	public void setLinkedEntityRole(Roles linkedEntityRole) {
+	public void setLinkedEntityRole(RoleType linkedEntityRole) {
 		this.linkedEntityRole = linkedEntityRole;
 	}
 
@@ -121,12 +72,48 @@ public class Notification implements Serializable,Comparable<Notification> {
 		this.dueDate = dueDate;
 	}
 
+	public long getEntityId() {
+		return entityId;
+	}
+
+	public RoleType getGroupType() {
+		return groupType;
+	}
+
+	public long getStandardId() {
+		return standardId;
+	}
+
+	public long getSchoolId() {
+		return schoolId;
+	}
+
+	public void setEntityId(long entityId) {
+		this.entityId = entityId;
+	}
+
+	public void setGroupType(RoleType groupType) {
+		this.groupType = groupType;
+	}
+
+	public void setStandardId(long standardId) {
+		this.standardId = standardId;
+	}
+
+	public void setSchoolId(long schoolId) {
+		this.schoolId = schoolId;
+	}
+	
+	@Override
+	public String toString() {
+		return "Notification [entityId=" + entityId + ", groupType=" + groupType + ", standardId=" + standardId
+				+ ", schoolId=" + schoolId + ", notificationType=" + notificationType + ", linkedEntity=" + linkedEntity
+				+ ", linkedEntityRole=" + linkedEntityRole + ", dueDate=" + dueDate + "]";
+	}
+
 	@Override
 	public int compareTo(Notification o) {
 		return this.createdDate.compareTo(o.createdDate);
 	}
-	
-	
-	
 
 }
