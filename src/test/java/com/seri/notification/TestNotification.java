@@ -34,7 +34,7 @@ public class TestNotification {
 	
 
 	@Test
-	@Ignore
+//	@Ignore
 	public void createEntityNotification(){
 		notificationService.createNotification(sampleNotification());
 		Notification notification = sampleNotification();
@@ -44,13 +44,16 @@ public class TestNotification {
 		notification.setSchoolId(9);
 		notification.setStandardId(2);
 		notificationService.createNotification(notification);
+		notification = sampleNotification();
+		notification.setEntityId(3);
+		notificationService.createNotification(notification);
 		
 	}
 	@Test
 //	@Ignore
 	public void testGetUserNotification() {
 		List<Notification> notificatioList = notificationService.getNotificationForUser(sampleUser());
-		assertEquals(3, notificatioList.size());
+		assertEquals(4, notificatioList.size());
 	}
 	
 	

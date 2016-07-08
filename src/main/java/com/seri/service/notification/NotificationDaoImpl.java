@@ -27,11 +27,12 @@ public class NotificationDaoImpl extends AbstractDao<Notification> implements No
 
 	@Override
 	public List<Notification> getNotificationsForUser(User user) {
-		Query query = entityManager.createQuery("select n from Notification n where groupType=:groupType AND dueDate >= :dueDate AND (schoolId = :schoolId OR schoolId = 0) AND (standardId IN :standardId OR standardId = 0) ORDER BY createdDate desc");
+		Query query = entityManager.createQuery("select n from Notification n where entityId=:entityId or (groupType=:groupType AND dueDate >= :dueDate AND (schoolId = :schoolId OR schoolId = 0) AND (standardId IN :standardId OR standardId = 0)) ORDER BY createdDate desc");
+		query.setParameter("entityId", user.getId());
 		query.setParameter("groupType", user.getDefaultRole().getRoleName());
 		query.setParameter("dueDate", CalendarUtil.getDate());
 		query.setParameter("schoolId", (long)user.getSchool());
-		query.setParameter("standardId", GlobalFunUtils.convertInLongArray(StringUtils.split(user.getStandard(), ",")));
+		query.setParameter("standardId", GlobalFunUtils.convertInLongList(StringUtils.split(user.getStandard(), ",")));
 		List<Notification> notificationList = query.getResultList();
 		return notificationList;
 	}
