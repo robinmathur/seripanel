@@ -5,7 +5,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -165,11 +167,11 @@ public class GlobalFunUtils {
         return userDetails;
     }
     
-    public static long[] convertInLongArray(String[] array){
-    	long[] longArray = new long[array.length];
+    public static List<Long> convertInLongList(String[] array){
+    	List<Long> longList = new ArrayList<Long>(array.length);
     	for(int i=0 ; i < array.length ; i++)
-    		longArray[i] = Long.valueOf(array[i]);
-    	return longArray;
+    		longList.add(Long.valueOf(array[i]));
+    	return longList;
     }
     
 }
