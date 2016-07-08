@@ -20,7 +20,7 @@ public class Syllabus implements Serializable {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name = "TASK_ID")
-    private int taskId;
+    private long taskId;
     @Column(name = "TASK_NAME")
     private String taskName;
     @Column(name = "SUBJECT_ID")
@@ -48,11 +48,11 @@ public class Syllabus implements Serializable {
     @Column(name = "LAST_UPDATED_DATE")
     private Date lastUpdatedDate;
 
-    public int getTaskId() {
+    public long getTaskId() {
         return taskId;
     }
 
-    public void setTaskId(int taskId) {
+    public void setTaskId(long taskId) {
         this.taskId = taskId;
     }
 

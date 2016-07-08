@@ -20,8 +20,7 @@ import com.seri.common.Gender;
  */
 @Entity
 @Table(name = "PARENTS")
-@PrimaryKeyJoinColumn(name="PARENT_ID")
-public class Parents extends User implements Serializable {
+public class Parents implements Serializable {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -40,7 +39,7 @@ public class Parents extends User implements Serializable {
     @Column(name = "L_NAME")
     private String lName;
     @Column(name = "DOB")
-    private String dob;
+    private Date dob;
     @Column(name = "PHOTO")
     private String photo;
     @Column(name = "GENDER")
@@ -125,11 +124,11 @@ public class Parents extends User implements Serializable {
         this.lName = lName;
     }
 
-    public String getDob() {
+    public Date getDob() {
         return dob;
     }
 
-    public void setDob(String dob) {
+    public void setDob(Date dob) {
         this.dob = dob;
     }
 

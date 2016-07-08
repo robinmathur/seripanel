@@ -2,13 +2,18 @@ package com.seri.service.notification;
 
 import java.util.List;
 
+import javax.persistence.Query;
+
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import com.seri.common.dao.AbstractDao;
 import com.seri.web.model.User;
+import com.seri.web.utils.CalendarUtil;
 import com.seri.web.utils.DbCon;
+import com.seri.web.utils.GlobalFunUtils;
 
 @Repository("notificationDao")
 public class NotificationDaoImpl extends AbstractDao<Notification> implements NotificationDao{
@@ -22,9 +27,13 @@ public class NotificationDaoImpl extends AbstractDao<Notification> implements No
 
 	@Override
 	public List<Notification> getNotificationsForUser(User user) {
-		
-		//TODO
-		return null;
+		Query query = entityManager.createQuery("select n from Notification n where groupType=:groupType AND dueDate >= :dueDate AND (schoolId = :schoolId OR schoolId = 0) AND (standardId IN :standardId OR standardId = 0) ORDER BY createdDate desc");
+		query.setParameter("groupType", user.getDefaultRole().getRoleName());
+		query.setParameter("dueDate", CalendarUtil.getDate());
+		query.setParameter("schoolId", (long)user.getSchool());
+		query.setParameter("standardId", GlobalFunUtils.convertInLongArray(StringUtils.split(user.getStandard(), ",")));
+		List<Notification> notificationList = query.getResultList();
+		return notificationList;
 	}
 
 }

@@ -56,7 +56,7 @@ public class SubjectDaoImpl implements SubjectDao {
     }
 
     @Override
-    public Subject getSubjectBySubjectId(int id) {
+    public Subject getSubjectBySubjectId(long id) {
         try {
             EntityManager em = DbCon.getEntityManager();
             Query ui = em.createQuery("select c from Subject c where c.subjectId=" + id);

@@ -165,4 +165,11 @@ public class GlobalFunUtils {
         return userDetails;
     }
     
+    public static long[] convertInLongArray(String[] array){
+    	long[] longArray = new long[array.length];
+    	for(int i=0 ; i < array.length ; i++)
+    		longArray[i] = Long.valueOf(array[i]);
+    	return longArray;
+    }
+    
 }

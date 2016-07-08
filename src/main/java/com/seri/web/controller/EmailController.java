@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.seri.service.notification.NotificatiobServiceAdaptor;
 import com.seri.web.dao.daoImpl.EmailDaoImpl;
 import com.seri.web.model.Email;
 import com.seri.web.model.User;

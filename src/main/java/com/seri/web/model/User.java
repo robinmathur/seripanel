@@ -32,7 +32,6 @@ import com.seri.service.notification.RoleType;
  */
 @Entity
 @Table(name = "USER")
-@Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
 public class User extends BaseEntity implements UserDetails {
     
 	private static final long serialVersionUID = 1L;
@@ -68,7 +67,7 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "SCHOOL")
     private int school;
     @Column(name = "STANDARD")
-    private int standard;
+    private String standard;
     
     @Transient
     private List<Role> authorities;
@@ -250,7 +249,7 @@ public class User extends BaseEntity implements UserDetails {
 		return school;
 	}
 
-	public int getStandard() {
+	public String getStandard() {
 		return standard;
 	}
 
@@ -258,7 +257,7 @@ public class User extends BaseEntity implements UserDetails {
 		this.school = school;
 	}
 
-	public void setStandard(int standard) {
+	public void setStandard(String standard) {
 		this.standard = standard;
 	}
 

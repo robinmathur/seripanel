@@ -11,12 +11,15 @@ import com.seri.common.CommonTypes;
 @Table(name = "RATING")
 public class Rating extends BaseEntity {
 
+	
+	@Column(name = "ENTITY")
+	private long entityId;
 	@Column(name = "RATE_TYPE")
 	private CommonTypes ratingType;
 	@Column(name = "RATE")
-	private long rate;
+	private int rate;
 	@Column(name = "OUTOF")
-	private long outof;
+	private int outof;
 	@Column(name = "SCHOOL")
 	private long schoolId;
 	@Column(name = "STANDARD")
@@ -26,11 +29,11 @@ public class Rating extends BaseEntity {
 	@Column(name = "COMMENT")
 	private String comment;
 
-	public long getRate() {
+	public int getRate() {
 		return rate;
 	}
 
-	public long getOutof() {
+	public int getOutof() {
 		return outof;
 	}
 
@@ -38,11 +41,11 @@ public class Rating extends BaseEntity {
 		return comment;
 	}
 
-	public void setRate(long rate) {
+	public void setRate(int rate) {
 		this.rate = rate;
 	}
 
-	public void setOutof(long outof) {
+	public void setOutof(int outof) {
 		this.outof = outof;
 	}
 
@@ -80,6 +83,15 @@ public class Rating extends BaseEntity {
 
 	public void setRatingType(CommonTypes ratingType) {
 		this.ratingType = ratingType;
+	}
+	
+
+	public long getEntityId() {
+		return entityId;
+	}
+
+	public void setEntityId(long entityId) {
+		this.entityId = entityId;
 	}
 
 	@Override

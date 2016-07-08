@@ -17,6 +17,16 @@
             <rtexprvalue>true</rtexprvalue>
         </attribute>
     </tag>
+    
+    <tag>
+        <name>parentNameUsingId</name>
+        <tag-class>com.seri.web.utils.tags.UserNameUsingIdTag</tag-class>
+        <body-content>scriptless</body-content>
+        <attribute>
+            <name>loginId</name>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
 
     <tag>
         <name>getCountryList</name>
@@ -101,5 +111,5 @@
         <name>recordSelector</name>
         <path>/WEB-INF/tags/utils/recordSelector.tag</path>
     </tag-file>
-
+    
 </taglib>

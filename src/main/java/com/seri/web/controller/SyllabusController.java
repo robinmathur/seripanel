@@ -1,5 +1,6 @@
 package com.seri.web.controller;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,13 +8,20 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.json.simple.JSONObject;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.seri.common.Gender;
+import com.seri.common.GenderPropertyEditorSupport;
+import com.seri.common.MyCustomNumberEditor;
+import com.seri.common.RoleTypePropertyEditorSupport;
 import com.seri.service.notification.RoleType;
 import com.seri.web.dao.HodDao;
 import com.seri.web.dao.ParentsDao;
@@ -53,6 +61,19 @@ public class SyllabusController {
     private StudentDao studentDao = new StudentDaoImpl();
     private SubjectDao subjectDao = new SubjectDaoImpl();
     private ParentsDao parentsDao = new ParentsDaoImpl();
+    
+    @InitBinder
+    public void initBinder(WebDataBinder binder)
+    {
+    	// true passed to CustomDateEditor constructor means convert empty String to null
+    	binder.registerCustomEditor(Date.class, new CustomDateEditor(CalendarUtil.getSystemDateFormat(), true));
+        binder.registerCustomEditor(RoleType.class, new RoleTypePropertyEditorSupport());
+        binder.registerCustomEditor(Gender.class, new GenderPropertyEditorSupport());
+        binder.registerCustomEditor(float.class, new MyCustomNumberEditor(Float.class));
+        binder.registerCustomEditor(long.class, new MyCustomNumberEditor(Long.class));
+        binder.registerCustomEditor(int.class, new MyCustomNumberEditor(Integer.class));
+        binder.registerCustomEditor(double.class, new MyCustomNumberEditor(Double.class));
+    } 
 
     @RequestMapping(value = "/content**", method = RequestMethod.GET)
     public ModelAndView manageStudentPage(HttpServletRequest request) {

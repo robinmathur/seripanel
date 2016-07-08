@@ -1,5 +1,6 @@
 package com.seri.web.utils;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.seri.service.notification.RoleType;
@@ -13,8 +14,8 @@ public class LoggedUserUtil {
 	public static long getSchoolId(){
 		return getUser().getSchool();
 	}
-	public static long getStandardId(){
-		return getUser().getStandard();
+	public static String[] getStandardId(){
+		return StringUtils.split(getUser().getStandard(), ",");
 	}
 	public static String getEmailId(){
 		return getUser().getEmail();

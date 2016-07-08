@@ -54,8 +54,8 @@
             <p>
                 <label>Gender</label>
                 <span class="formwrapper">
-                    <input type="radio" name="gender" value="male" checked /> Male &nbsp; &nbsp;
-                    <input type="radio" name="gender" value="female" /> Female
+                    <input type="radio" name="gender" value="MALE" checked /> Male &nbsp; &nbsp;
+                    <input type="radio" name="gender" value="FEMALE" /> Female
                 </span>
             </p>
 
