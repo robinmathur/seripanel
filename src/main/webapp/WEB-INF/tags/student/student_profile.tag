@@ -10,7 +10,7 @@
     <h4 class="widgettitle">Student Profile</h4>
     <div class="widgetcontent">
         <form class="stdform" action="/${formAction}" name="studentForm" method="post">
-            <input type="hidden" name="userId" value="${userForm.userId}" />
+            <input type="hidden" name="userId" value="${userForm.id}" />
             <input type="hidden" name="studentId" value="${studentForm.studentId}" />
             <input type="hidden" name="stuSchoolId" value="${studentForm.stuSchoolId}" />
             <input type="hidden" name="p" value="${param.p}">
@@ -18,7 +18,7 @@
             <div class="par control-group ${emailErrClass}">
                 <label for="login" class="control-label">Email Id</label>
                 <div class="controls">
-                    <input type="text" class="span4 " id="login" name="login" readonly="readonly" value="${userForm.login}" placeholder="Enter Email Id">
+                    <input type="text" class="span4 " id="email" name="email" readonly="readonly" value="${userForm.email}" placeholder="Enter Email Id">
                     <span class="help-inline">${emailErrrrMsg}</span>
                 </div>
             </div><!--par-->

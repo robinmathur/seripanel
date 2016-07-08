@@ -13,9 +13,9 @@ public interface TeacherDao {
 
     public boolean update(Teacher teacher);
 
-    public Teacher getTeacherUsingTeacherId(int id);
+    public Teacher getTeacherUsingTeacherId(long id);
 
-    public Teacher getTeacherUsingLoginId(int email);
+    public Teacher getTeacherUsingLoginId(long email);
 
     public List<Teacher> getTeacherListUsingSchoolId(Map<String, Integer> params, boolean count);
 }

@@ -14,8 +14,9 @@ public interface ParentsDao {
 
     public boolean delete(Parents parents);
 
-    public Parents getProfileUsingLoginId(String LoginId);
 
-    public Parents getProfileUsingParentsId(int parentsId);
+    public Parents getProfileUsingParentsId(long parentsId);
+
+	Parents getProfileUsingLoginId(long LoginId);
 
 }

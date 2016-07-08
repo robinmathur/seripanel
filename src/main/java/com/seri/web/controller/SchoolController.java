@@ -1,15 +1,9 @@
 package com.seri.web.controller;
 
-import com.seri.web.dao.DepartmentDao;
-import com.seri.web.dao.SchoolDao;
-import com.seri.web.dao.StandardDao;
-import com.seri.web.dao.TeacherDao;
-import com.seri.web.dao.daoImpl.DepartmentDaoImpl;
-import com.seri.web.dao.daoImpl.STandardDaoImpl;
-import com.seri.web.dao.daoImpl.SchoolDaoImpl;
-import com.seri.web.dao.daoImpl.TeacherDaoImpl;
-import com.seri.web.model.*;
-import com.seri.web.utils.GlobalFunUtils;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,9 +11,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-import java.util.Map;
+import com.seri.service.notification.RoleType;
+import com.seri.web.dao.DepartmentDao;
+import com.seri.web.dao.SchoolDao;
+import com.seri.web.dao.StandardDao;
+import com.seri.web.dao.daoImpl.DepartmentDaoImpl;
+import com.seri.web.dao.daoImpl.SchoolDaoImpl;
+import com.seri.web.dao.daoImpl.StandardDaoImpl;
+import com.seri.web.model.Department;
+import com.seri.web.model.School;
+import com.seri.web.model.Standard;
+import com.seri.web.utils.CalendarUtil;
+import com.seri.web.utils.GlobalFunUtils;
+import com.seri.web.utils.LoggedUserUtil;
 
 /**
  * Created by puneet on 23/04/16.
@@ -30,12 +34,11 @@ public class SchoolController {
     private GlobalFunUtils globalFunUtils = new GlobalFunUtils();
     private SchoolDao schoolDao = new SchoolDaoImpl();
     private DepartmentDao departmentDao = new DepartmentDaoImpl();
-    private StandardDao standardDao = new STandardDaoImpl();
+    private StandardDao standardDao = new StandardDaoImpl();
 
     @RequestMapping(value = "/addschool**", method = RequestMethod.GET)
     public ModelAndView addSchoolPage(@ModelAttribute("schoolForm") School schoolForm) {
         ModelAndView model = new ModelAndView();
-        User sessUser = globalFunUtils.getLoggedInUserDetail();
         model.addObject("schoolForm", schoolForm);
         model.addObject("formAction", "add");
         model.setViewName("school/add_update");
@@ -45,7 +48,6 @@ public class SchoolController {
     @RequestMapping(value = "/add**", method = RequestMethod.POST)
     public ModelAndView addPage(@ModelAttribute("schoolForm") School schoolForm) {
         ModelAndView model = new ModelAndView();
-        User sessUser = globalFunUtils.getLoggedInUserDetail();
         Boolean errFlag = false;
         try {
             if (schoolDao.getSchoolUsingEmail(schoolForm.getSchoolEmail()) != null) {
@@ -60,10 +62,10 @@ public class SchoolController {
             }
 
             if (!errFlag) {
-                schoolForm.setCreatedDate(globalFunUtils.getDateTime());
-                schoolForm.setCreatedBy(sessUser.getLogin());
-                schoolForm.setLastUpdatedDate(globalFunUtils.getDateTime());
-                schoolForm.setLastUpdatedBy(sessUser.getLogin());
+                schoolForm.setCreatedDate(CalendarUtil.getDate());
+                schoolForm.setCreatedBy(LoggedUserUtil.getUserId());
+                schoolForm.setLastUpdatedDate(CalendarUtil.getDate());
+                schoolForm.setLastUpdatedBy(LoggedUserUtil.getUserId());
                 errFlag = schoolDao.create(schoolForm);
             }
         } catch (Exception e){
@@ -83,7 +85,6 @@ public class SchoolController {
     @RequestMapping(value = "/manage**", method = RequestMethod.GET)
     public ModelAndView manageSchoolPage() {
         ModelAndView model = new ModelAndView();
-        User sessUser = globalFunUtils.getLoggedInUserDetail();
         List<School> schoolList = schoolDao.getAllSchool();
         List<Standard> standardList = standardDao.getPrimaryStandard();
         model.addObject("standardList", standardList);
@@ -95,16 +96,14 @@ public class SchoolController {
     @RequestMapping(value = "/editschool**", method = RequestMethod.GET)
     public ModelAndView editSchoolPage(HttpServletRequest request) {
         try {
-            User sessUser = globalFunUtils.getLoggedInUserDetail();
-            String schoolLogin = "";
-            if (sessUser.getRole().equals("ROLE_SCHOOL_ADMIN")) {
-                schoolLogin = sessUser.getLogin();
+            School schoolForm = null;
+            if (LoggedUserUtil.hasRole(RoleType.ROLE_SCHOOL_ADMIN)) {
+                long schoolLogin = LoggedUserUtil.getUserId();
+                schoolForm = schoolDao.getSchoolUsingPrincipal(schoolLogin);
             } else {
                 int tempSchoolId = Integer.parseInt(request.getParameter("id"));
-                School tempSchool = schoolDao.getSchoolUsingId(tempSchoolId);
-                schoolLogin=tempSchool.getPrincipalUserLogin();
+                schoolForm = schoolDao.getSchoolUsingId(tempSchoolId);
             }
-            School schoolForm = schoolDao.getSchoolUsingPrincipalEmail(schoolLogin);
             if(schoolForm == null)
                 throw new Exception();
             ModelAndView model = new ModelAndView();
@@ -122,7 +121,6 @@ public class SchoolController {
     @RequestMapping(value = "/edit**", method = RequestMethod.POST)
     public ModelAndView editPage(@ModelAttribute("schoolForm") School schoolForm) {
         ModelAndView model = new ModelAndView();
-        User sessUser = globalFunUtils.getLoggedInUserDetail();
         Boolean errFlag = false;
         try {
             if (schoolDao.getSchoolNotUsingSameEmail(schoolForm.getSchoolEmail(), schoolForm.getSchoolId()) != null) {
@@ -137,8 +135,8 @@ public class SchoolController {
             }
 
             if (!errFlag) {
-                schoolForm.setLastUpdatedDate(globalFunUtils.getDateTime());
-                schoolForm.setLastUpdatedBy(sessUser.getLogin());
+                schoolForm.setLastUpdatedDate(CalendarUtil.getDate());
+                schoolForm.setLastUpdatedBy(LoggedUserUtil.getUserId());
                 errFlag = schoolDao.update(schoolForm);
             }
         } catch (Exception e){

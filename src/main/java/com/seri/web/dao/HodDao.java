@@ -17,9 +17,9 @@ public interface HodDao {
 
     public List<Hod> getAllHod();
 
-    public Hod getHodByHodId(int hodId);
+    public Hod getHodByHodId(long hodId);
 
-    public Hod getHodByUserId(int userId);
+    public Hod getHodByUserId(long userId);
 
     public Hod getHodByLoginId(String loginId);
 }

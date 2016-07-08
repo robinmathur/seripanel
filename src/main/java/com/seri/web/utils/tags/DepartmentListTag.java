@@ -1,17 +1,16 @@
 package com.seri.web.utils.tags;
 
-import com.seri.web.controller.SchoolController;
-import com.seri.web.dao.DepartmentDao;
-import com.seri.web.dao.UserDao;
-import com.seri.web.dao.daoImpl.DepartmentDaoImpl;
-import com.seri.web.dao.daoImpl.UserDaoImpl;
-import com.seri.web.model.Department;
-import com.seri.web.model.User;
-import com.seri.web.utils.GlobalFunUtils;
+import java.io.IOException;
 
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
-import java.io.IOException;
+
+import com.seri.service.notification.RoleType;
+import com.seri.web.controller.SchoolController;
+import com.seri.web.dao.DepartmentDao;
+import com.seri.web.dao.daoImpl.DepartmentDaoImpl;
+import com.seri.web.model.Department;
+import com.seri.web.utils.LoggedUserUtil;
 
 /**
  * Created by puneet on 23/05/16.
@@ -23,9 +22,7 @@ public class DepartmentListTag extends SimpleTagSupport {
     private String ctrlId;
     private String ctrlClass;
     private String selectedDepartment;
-    private UserDao userDao = new UserDaoImpl();
     private DepartmentDao departmentDao = new DepartmentDaoImpl();
-    private GlobalFunUtils globalFunUtils = new GlobalFunUtils();
 
     public void setCtrlName(String ctrlName) {
         this.ctrlName = ctrlName;
@@ -59,9 +56,8 @@ public class DepartmentListTag extends SimpleTagSupport {
         String ctrl = schoolController.getDepartmentListing(ctrlName,ctrlId,ctrlClass,selectedDepartment);
 
         JspWriter out = getJspContext().getOut();
-        User sessUser = globalFunUtils.getLoggedInUserDetail();
 
-        if(sessUser.getRole().equals("ROLE_HOD")) {
+        if(LoggedUserUtil.hasRole(RoleType.ROLE_HOD)) {
             Department department = departmentDao.getDepartmentUsingId(Integer.parseInt(selectedDepartment));
             //ctrl = "<span>"+department.getDepartmentName()+"</span><input type='hidden' id='departmentId' value='"+department.getDepartmentId()+"' />";
         }

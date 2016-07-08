@@ -1,17 +1,14 @@
 package com.seri.web.utils.tags;
 
-import com.seri.web.dao.ParentsDao;
-import com.seri.web.dao.StandardDao;
-import com.seri.web.dao.daoImpl.ParentsDaoImpl;
-import com.seri.web.dao.daoImpl.STandardDaoImpl;
-import com.seri.web.model.Parents;
-import com.seri.web.model.Standard;
-import com.seri.web.model.Syllabus;
-import com.seri.web.utils.GlobalFunUtils;
+import java.io.IOException;
 
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
-import java.io.IOException;
+
+import com.seri.web.dao.StandardDao;
+import com.seri.web.dao.daoImpl.StandardDaoImpl;
+import com.seri.web.model.Standard;
+import com.seri.web.utils.GlobalFunUtils;
 
 /**
  * Created by puneet on 05/06/16.
@@ -19,7 +16,7 @@ import java.io.IOException;
 public class StandardAttributeUsingIdTag extends SimpleTagSupport {
 
     private GlobalFunUtils globalFunUtils = new GlobalFunUtils();
-    private StandardDao standardDao = new STandardDaoImpl();
+    private StandardDao standardDao = new StandardDaoImpl();
     private String propName;
     private String id;
 

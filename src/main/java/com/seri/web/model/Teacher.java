@@ -1,7 +1,18 @@
 package com.seri.web.model;
 
-import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * Created by puneet on 07/04/16.
@@ -14,8 +25,8 @@ public class Teacher implements Serializable {
     @Column(name = "TEACHER_ID")
     private int teacherId;
 
-    @Column(name = "TEACHER_LOGIN_ID")
-    private String teacherLoginId;
+    @Column(name = "EMAIL")
+    private String email;
     @Column(name = "TEACHER_SCHOOL_ID")
     private int teacherSchoolId;
     @Column(name = "STANDARD_ID")
@@ -28,7 +39,9 @@ public class Teacher implements Serializable {
     @Column(name = "L_NAME")
     private String lName;
     @Column(name = "DOB")
-    private String dob;
+    @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date dob;
     @Column(name = "PHOTO")
     private String photo;
     @Column(name = "GENDER")
@@ -37,7 +50,7 @@ public class Teacher implements Serializable {
     @Column(name = "t_mob_no")
     private String tMobNo;
     @Column(name = "t_login_id")
-    private int tLoginId;
+    private long tLoginId;
     @Column(name = "t_ph_no")
     private String tPhNo;
     @Column(name = "t_description")
@@ -49,11 +62,11 @@ public class Teacher implements Serializable {
     @Column(name = "t_home_adress")
     private String tHomeAdress;
     @Column(name = "t_experiance")
-    private String tExperiance;
+    private float tExperiance;
     @Column(name = "t_sec_marks")
-    private String tSecMarks;
+    private float tSecMarks;
     @Column(name = "t_sen_sec_marks")
-    private String tSenSecMarks;
+    private float tSenSecMarks;
     @Column(name = "t_grad_metadata")
     private String tGradMetadata;
     @Column(name = "t_pg_metadata")
@@ -73,7 +86,8 @@ public class Teacher implements Serializable {
     @Column(name = "t_oth_skills")
     private String tOthSkills;
     @Column(name = "t_joining_date")
-    private String tJoiningDate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date tJoiningDate;
     @Column(name = "t_lang_speak")
     private String tLangSpeak;
     @Column(name = "t_lang_write")
@@ -87,13 +101,13 @@ public class Teacher implements Serializable {
     @Column(name = "t_last_org_metadata")
     private String tLastOrgMetadata;
     @Column(name = "t_created_date")
-    private String tCreatedDate;
+    private Date tCreatedDate;
     @Column(name = "t_created_by")
-    private String tCreatedBy;
+    private long tCreatedBy;
     @Column(name = "t_last_update_date")
-    private String tLastUpdateDate;
+    private Date tLastUpdateDate;
     @Column(name = "t_last_update_by")
-    private String tLastUpdateBy;
+    private long tLastUpdateBy;
 
     public int getTeacherId() {
         return teacherId;
@@ -103,15 +117,15 @@ public class Teacher implements Serializable {
         this.teacherId = teacherId;
     }
 
-    public String getTeacherLoginId() {
-        return teacherLoginId;
-    }
+    public String getEmail() {
+		return email;
+	}
 
-    public void setTeacherLoginId(String teacherLoginId) {
-        this.teacherLoginId = teacherLoginId;
-    }
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
-    public int getTeacherSchoolId() {
+	public int getTeacherSchoolId() {
         return teacherSchoolId;
     }
 
@@ -151,11 +165,11 @@ public class Teacher implements Serializable {
         this.lName = lName;
     }
 
-    public String getDob() {
+    public Date getDob() {
         return dob;
     }
 
-    public void setDob(String dob) {
+    public void setDob(Date dob) {
         this.dob = dob;
     }
 
@@ -183,11 +197,11 @@ public class Teacher implements Serializable {
         this.tMobNo = tMobNo;
     }
 
-    public int gettLoginId() {
+    public long gettLoginId() {
         return tLoginId;
     }
 
-    public void settLoginId(int tLoginId) {
+    public void settLoginId(long tLoginId) {
         this.tLoginId = tLoginId;
     }
 
@@ -231,27 +245,27 @@ public class Teacher implements Serializable {
         this.tHomeAdress = tHomeAdress;
     }
 
-    public String gettExperiance() {
+    public float gettExperiance() {
         return tExperiance;
     }
 
-    public void settExperiance(String tExperiance) {
+    public void settExperiance(float tExperiance) {
         this.tExperiance = tExperiance;
     }
 
-    public String gettSecMarks() {
+    public float gettSecMarks() {
         return tSecMarks;
     }
 
-    public void settSecMarks(String tSecMarks) {
+    public void settSecMarks(float tSecMarks) {
         this.tSecMarks = tSecMarks;
     }
 
-    public String gettSenSecMarks() {
+    public float gettSenSecMarks() {
         return tSenSecMarks;
     }
 
-    public void settSenSecMarks(String tSenSecMarks) {
+    public void settSenSecMarks(float tSenSecMarks) {
         this.tSenSecMarks = tSenSecMarks;
     }
 
@@ -327,11 +341,11 @@ public class Teacher implements Serializable {
         this.tOthSkills = tOthSkills;
     }
 
-    public String gettJoiningDate() {
+    public Date gettJoiningDate() {
         return tJoiningDate;
     }
 
-    public void settJoiningDate(String tJoiningDate) {
+    public void settJoiningDate(Date tJoiningDate) {
         this.tJoiningDate = tJoiningDate;
     }
 
@@ -383,35 +397,35 @@ public class Teacher implements Serializable {
         this.tLastOrgMetadata = tLastOrgMetadata;
     }
 
-    public String gettCreatedDate() {
+    public Date gettCreatedDate() {
         return tCreatedDate;
     }
 
-    public void settCreatedDate(String tCreatedDate) {
+    public void settCreatedDate(Date tCreatedDate) {
         this.tCreatedDate = tCreatedDate;
     }
 
-    public String gettCreatedBy() {
+    public long gettCreatedBy() {
         return tCreatedBy;
     }
 
-    public void settCreatedBy(String tCreatedBy) {
+    public void settCreatedBy(long tCreatedBy) {
         this.tCreatedBy = tCreatedBy;
     }
 
-    public String gettLastUpdateDate() {
+    public Date gettLastUpdateDate() {
         return tLastUpdateDate;
     }
 
-    public void settLastUpdateDate(String tLastUpdateDate) {
+    public void settLastUpdateDate(Date tLastUpdateDate) {
         this.tLastUpdateDate = tLastUpdateDate;
     }
 
-    public String gettLastUpdateBy() {
+    public long gettLastUpdateBy() {
         return tLastUpdateBy;
     }
 
-    public void settLastUpdateBy(String tLastUpdateBy) {
+    public void settLastUpdateBy(long tLastUpdateBy) {
         this.tLastUpdateBy = tLastUpdateBy;
     }
 }

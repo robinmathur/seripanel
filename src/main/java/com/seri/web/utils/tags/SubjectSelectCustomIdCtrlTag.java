@@ -1,18 +1,19 @@
 package com.seri.web.utils.tags;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.tagext.SimpleTagSupport;
+
 import com.seri.web.dao.StandardDao;
 import com.seri.web.dao.SubjectDao;
-import com.seri.web.dao.daoImpl.STandardDaoImpl;
+import com.seri.web.dao.daoImpl.StandardDaoImpl;
 import com.seri.web.dao.daoImpl.SubjectDaoImpl;
 import com.seri.web.model.Standard;
 import com.seri.web.model.Subject;
 import com.seri.web.utils.GlobalFunUtils;
-
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.tagext.SimpleTagSupport;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by puneet on 05/06/16.
@@ -20,7 +21,7 @@ import java.util.List;
 public class SubjectSelectCustomIdCtrlTag extends SimpleTagSupport {
     private GlobalFunUtils globalFunUtils = new GlobalFunUtils();
     private SubjectDao subjectDao = new SubjectDaoImpl();
-    private StandardDao standardDao = new STandardDaoImpl();
+    private StandardDao standardDao = new StandardDaoImpl();
     private String ids;
     private String ctrlName;
     private String ctrlId;

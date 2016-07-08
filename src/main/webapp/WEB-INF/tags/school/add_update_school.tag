@@ -23,7 +23,7 @@
     <div class="widgetcontent">
         <form class="stdform" action="/school/${formAction}" name="schoolForm" method="post">
             <input type="hidden" name="schoolId" value="${schoolForm.schoolId}">
-            <input type="hidden" name="principalUserLogin" value="${schoolForm.principalUserLogin}">
+            <input type="hidden" name="principal" value="${schoolForm.principal}">
             <div class="par control-group ${emailErrClass}">
                 <label for="schoolEmail" class="control-label">School Email Id</label>
                 <div class="controls">

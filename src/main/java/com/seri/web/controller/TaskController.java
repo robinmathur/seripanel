@@ -1,21 +1,54 @@
 package com.seri.web.controller;
 
-import com.seri.web.dao.*;
-import com.seri.web.dao.daoImpl.*;
-import com.seri.web.model.*;
-import com.seri.web.utils.GlobalFunUtils;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.json.simple.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.seri.common.Gender;
+import com.seri.common.GenderPropertyEditorSupport;
+import com.seri.common.MyCustomNumberEditor;
+import com.seri.common.RoleTypePropertyEditorSupport;
+import com.seri.service.notification.NotificationService;
+import com.seri.service.notification.RoleType;
+import com.seri.service.rating.RatingDao;
+import com.seri.web.dao.HodDao;
+import com.seri.web.dao.ParentsDao;
+import com.seri.web.dao.SchoolDao;
+import com.seri.web.dao.StudentDao;
+import com.seri.web.dao.SubjectDao;
+import com.seri.web.dao.SyllabusDao;
+import com.seri.web.dao.TeacherDao;
+import com.seri.web.dao.daoImpl.HodDaoImpl;
+import com.seri.web.dao.daoImpl.ParentsDaoImpl;
+import com.seri.web.dao.daoImpl.SchoolDaoImpl;
+import com.seri.web.dao.daoImpl.StudentDaoImpl;
+import com.seri.web.dao.daoImpl.SubjectDaoImpl;
+import com.seri.web.dao.daoImpl.SyllabusDaoImpl;
+import com.seri.web.dao.daoImpl.TeacherDaoImpl;
+import com.seri.web.model.Hod;
+import com.seri.web.model.Parents;
+import com.seri.web.model.School;
+import com.seri.web.model.Student;
+import com.seri.web.model.Subject;
+import com.seri.web.model.Syllabus;
+import com.seri.web.model.Teacher;
+import com.seri.web.utils.CalendarUtil;
+import com.seri.web.utils.LoggedUserUtil;
 
 /**
  * Created by puneet on 11/06/16.
@@ -24,61 +57,85 @@ import java.util.Map;
 @RequestMapping(value = "tasks")
 public class TaskController {
 
-    private GlobalFunUtils globalFunUtils = new GlobalFunUtils();
     private SchoolDao schoolDao = new SchoolDaoImpl();
-    private UserDao userDao = new UserDaoImpl();
     private SyllabusDao syllabusDao = new SyllabusDaoImpl();
-    private StandardDao standardDao = new STandardDaoImpl();
     private HodDao hodDao = new HodDaoImpl();
     private TeacherDao teacherDao = new TeacherDaoImpl();
     private StudentDao studentDao = new StudentDaoImpl();
     private SubjectDao subjectDao = new SubjectDaoImpl();
     private ParentsDao parentsDao = new ParentsDaoImpl();
+    @Autowired
+    private NotificationService notificationService;
+    
+    @Autowired
+    private RatingDao ratingDao;
+    
+    @InitBinder
+    public void initBinder(WebDataBinder binder)
+    {
+    	// true passed to CustomDateEditor constructor means convert empty String to null
+    	binder.registerCustomEditor(Date.class, new CustomDateEditor(CalendarUtil.getSystemDateFormat(), true));
+        binder.registerCustomEditor(RoleType.class, new RoleTypePropertyEditorSupport());
+        binder.registerCustomEditor(Gender.class, new GenderPropertyEditorSupport());
+        binder.registerCustomEditor(float.class, new MyCustomNumberEditor(Float.class));
+        binder.registerCustomEditor(long.class, new MyCustomNumberEditor(Long.class));
+        binder.registerCustomEditor(int.class, new MyCustomNumberEditor(Integer.class));
+        binder.registerCustomEditor(double.class, new MyCustomNumberEditor(Double.class));
+    } 
 
     @RequestMapping(value = "/content**", method = RequestMethod.GET)
     public ModelAndView manageStudentPage(HttpServletRequest request) {
         try {
+        	
             ModelAndView model = new ModelAndView();
-            User sessUser = globalFunUtils.getLoggedInUserDetail();
-            int schoolId = 0;
-            int standardId = 0;
-            int subjectId = 0;
-            int moduleId = 0;
+            long schoolId = 0;
+            long standardId = 0;
+            long subjectId = 0;
+            long moduleId = 0;
             String taskName="";
-            if (sessUser.getRole().equals("ROLE_TEACHER")) {
-                Teacher teacher = teacherDao.getTeacherUsingLoginId(sessUser.getUserId());
+            if (LoggedUserUtil.hasRole(RoleType.ROLE_TEACHER)) {
+                Teacher teacher = teacherDao.getTeacherUsingLoginId(LoggedUserUtil.getUserId());
                 schoolId = teacher.getTeacherSchoolId();
                 String tempStandardId = teacher.getTeacherStandardId();
                 tempStandardId = tempStandardId.substring(1, tempStandardId.length() - 1);
                 if (request.getParameter("standardid") != null){
-                    standardId = Integer.parseInt(request.getParameter("standardid"));
+                    standardId = Long.parseLong(request.getParameter("standardid"));
                 }
                 model.addObject("tempStandardId", tempStandardId);
-            } else if (sessUser.getRole().equals("ROLE_HOD")) {
+            } else if (LoggedUserUtil.hasRole(RoleType.ROLE_HOD)) {
 
-            } else if (sessUser.getRole().equals("ROLE_SCHOOL_ADMIN")) {
+            } else if (LoggedUserUtil.hasRole(RoleType.ROLE_SCHOOL_ADMIN)) {
                 if (request.getParameter("standardid") != null){
-                    standardId = Integer.parseInt(request.getParameter("standardid"));
+                    standardId = Long.parseLong(request.getParameter("standardid"));
                 }
-                School school = schoolDao.getSchoolUsingPrincipalEmail(sessUser.getLogin());
+                School school = schoolDao.getSchoolUsingPrincipal(LoggedUserUtil.getUserId());
                 schoolId = school.getSchoolId();
 
-            } else if (sessUser.getRole().equals("ROLE_SUP_ADMIN")) {
+            } else if (LoggedUserUtil.hasRole(RoleType.ROLE_SUP_ADMIN)) {
                 if (request.getParameter("standardid") != null){
-                    standardId = Integer.parseInt(request.getParameter("standardid"));
+                    standardId = Long.parseLong(request.getParameter("standardid"));
                 }
                 if (request.getParameter("schoolid") != null){
-                    schoolId = Integer.parseInt(request.getParameter("schoolid"));
+                    schoolId = Long.parseLong(request.getParameter("schoolid"));
                 }
-            } else {
+            } /*else if (LoggedUserUtil.hasRole(RoleType.ROLE_STUDENT)) {
+                if (LoggedUserUtil.getUser() != null){
+                	standardId = LoggedUserUtil.getStandardId();
+                	schoolId = LoggedUserUtil.getSchoolId();
+//                    standardId = Long.parseLong(request.getParameter("standardid"));
+                }
+//                if (request.getParameter("schoolid") != null){
+//                    schoolId = Long.parseLong(request.getParameter("schoolid"));
+//                }
+            } */else {
                 throw new Exception();
             }
 
             if(request.getParameter("subjectid") != null){
-                subjectId = Integer.parseInt(request.getParameter("subjectid"));
+                subjectId = Long.parseLong(request.getParameter("subjectid"));
             }
             if(request.getParameter("moduleid") != null){
-                moduleId = Integer.parseInt(request.getParameter("moduleid"));
+                moduleId = Long.parseLong(request.getParameter("moduleid"));
             }
             if(request.getParameter("taskname") != null){
                 taskName = request.getParameter("taskname");
@@ -88,7 +145,7 @@ public class TaskController {
             Syllabus syllabus = null;
             if(schoolId>0 && standardId>0 && subjectId>0) {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("syllabusDueDate", globalFunUtils.getDateTime());
+                params.put("syllabusDueDate", CalendarUtil.getSystemDateFormat().toString());
                 params.put("schoolId", String.valueOf(schoolId));
                 params.put("standardId", String.valueOf(standardId));
                 params.put("subjectId", String.valueOf(subjectId));
@@ -98,6 +155,7 @@ public class TaskController {
                 params.put("studentId", "0");
                 syllabus = syllabusDao.getSyllabusBySyllabusFilters(params);
             }
+            
             model.addObject("schoolId", schoolId);
             model.addObject("standardId", standardId);
             model.addObject("subjectId", subjectId);
@@ -111,6 +169,7 @@ public class TaskController {
             model.setViewName("tasks/add_update");
             return model;
         } catch (Exception e) {
+        	e.printStackTrace();
             return new ModelAndView("redirect:standard/manage?token=invalidselection&");
         }
     }
@@ -118,44 +177,40 @@ public class TaskController {
     @RequestMapping(value = "/addtask**", method = RequestMethod.POST)
     public ModelAndView addSyllabusPage(@ModelAttribute("taskForm") Syllabus taskForm) {
         ModelAndView model = new ModelAndView();
-        User sessUser = globalFunUtils.getLoggedInUserDetail();
-        if(sessUser.getRole().equals("ROLE_SCHOOL_ADMIN")){
-            School school = schoolDao.getSchoolUsingPrincipalEmail(sessUser.getLogin());
+        if(LoggedUserUtil.hasRole(RoleType.ROLE_SCHOOL_ADMIN)){
+            School school = schoolDao.getSchoolUsingPrincipal(LoggedUserUtil.getUserId());
             taskForm.setSchoolId(school.getSchoolId());
         }
 
-        if(sessUser.getRole().equals("ROLE_TEACHER")){
-            Teacher teacher = teacherDao.getTeacherUsingLoginId(sessUser.getUserId());
+        if(LoggedUserUtil.hasRole(RoleType.ROLE_TEACHER)){
+            Teacher teacher = teacherDao.getTeacherUsingLoginId(LoggedUserUtil.getUserId());
             taskForm.setSchoolId(teacher.getTeacherSchoolId());
         }
 
-        String dateTime = globalFunUtils.getDateTime();
         taskForm.setModuleId(0);
-        taskForm.setCreatedBy(sessUser.getLogin());
-        taskForm.setCreatedDate(dateTime);
-        taskForm.setLastUpdatedBy(sessUser.getLogin());
-        taskForm.setLastUpdatedDate(dateTime);
+        taskForm.setCreatedBy(LoggedUserUtil.getUserId());
+        taskForm.setCreatedDate(CalendarUtil.getDate());
+        taskForm.setLastUpdatedBy(LoggedUserUtil.getUserId());
+        taskForm.setLastUpdatedDate(CalendarUtil.getDate());
         syllabusDao.create(taskForm);
-        model.setViewName("redirect:content/?token=success&schoolid="+taskForm.getSchoolId()+"&standardid="+taskForm.getStandardId()+"&subjectid="+taskForm.getSubjectId()+"&taskname="+taskForm.getTaskName());
+        model.setViewName("redirect:/task/content/?token=success&schoolid="+taskForm.getSchoolId()+"&standardid="+taskForm.getStandardId()+"&subjectid="+taskForm.getSubjectId()+"&taskname="+taskForm.getTaskName());
         return model;
     }
 
     @RequestMapping(value = "/edittask/**", method = RequestMethod.POST)
     public ModelAndView editSyllabusPage(@ModelAttribute("taskForm") Syllabus taskForm, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
-        User sessUser = globalFunUtils.getLoggedInUserDetail();
-        String dateTime = globalFunUtils.getDateTime();
-        if(sessUser.getRole().equals("ROLE_SCHOOL_ADMIN")){
-            School school = schoolDao.getSchoolUsingPrincipalEmail(sessUser.getLogin());
+        if(LoggedUserUtil.hasRole(RoleType.ROLE_SCHOOL_ADMIN)){
+            School school = schoolDao.getSchoolUsingPrincipal(LoggedUserUtil.getUserId());
             taskForm.setSchoolId(school.getSchoolId());
         }
-        if(sessUser.getRole().equals("ROLE_TEACHER")){
-            Teacher teacher = teacherDao.getTeacherUsingLoginId(sessUser.getUserId());
+        if(LoggedUserUtil.hasRole(RoleType.ROLE_TEACHER)){
+            Teacher teacher = teacherDao.getTeacherUsingTeacherId(LoggedUserUtil.getUserId());
             taskForm.setSchoolId(teacher.getTeacherSchoolId());
         }
-        taskForm.setTaskId(Integer.parseInt(request.getParameter("taskId1")));
-        taskForm.setLastUpdatedBy(sessUser.getLogin());
-        taskForm.setLastUpdatedDate(dateTime);
+        taskForm.setTaskId(Long.parseLong(request.getParameter("taskId1")));
+        taskForm.setLastUpdatedBy(LoggedUserUtil.getUserId());
+        taskForm.setLastUpdatedDate(CalendarUtil.getDate());
         syllabusDao.update(taskForm);
         model.setViewName("redirect:/tasks/content/?token=success&schoolid="+taskForm.getSchoolId()+"&standardid="+taskForm.getStandardId()+"&subjectid="+taskForm.getSubjectId()+"&taskname="+taskForm.getTaskName());
         return model;
@@ -164,26 +219,25 @@ public class TaskController {
     @RequestMapping(value = "/viewtask/**", method = RequestMethod.GET)
     public ModelAndView viewTaskPage(@ModelAttribute("taskForm") Syllabus taskForm, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
-        User sessUser = globalFunUtils.getLoggedInUserDetail();
         String schoolId="0", standardId="0", subjectId="0";
-        if(sessUser.getRole().equals("ROLE_SUP_ADMIN") || sessUser.getRole().equals("ROLE_SUB_ADMIN")) {
+        if(LoggedUserUtil.hasAnyRole(RoleType.ROLE_SUP_ADMIN,RoleType.ROLE_SUB_ADMIN)) {
             if(request.getParameter("schoolid")==null || request.getParameter("standardid")==null || request.getParameter("subjectid")==null)
                 model.setViewName("redirect:manage?token=invalidselection");
             schoolId=request.getParameter("schoolid");
             standardId=request.getParameter("standardid");
             subjectId=request.getParameter("subjectid");
-        }else if(sessUser.getRole().equals("ROLE_STUDENT")) {
+        }else if(LoggedUserUtil.hasRole(RoleType.ROLE_STUDENT)) {
             if(request.getParameter("subjectid")==null)
                 return new ModelAndView("redirect:dashboard?token=invalidselection");
-            Student student = studentDao.getStudentUsingStudentLogin(sessUser.getLogin());
+            Student student = studentDao.getStudentUsingStudentLogin(LoggedUserUtil.getUserId());
             schoolId=String.valueOf(student.getStuSchoolId());
             standardId=String.valueOf(student.getStuStandardId());
             subjectId=request.getParameter("subjectid");
             model.addObject("studentId", student.getStudentId());
-        } else if(sessUser.getRole().equals("ROLE_PARENT")) {
+        } else if(LoggedUserUtil.hasRole(RoleType.ROLE_PARENT)) {
             if(request.getParameter("subjectid")==null)
                 return new ModelAndView("redirect:dashboard?token=invalidselection");
-            Parents parents = parentsDao.getProfileUsingLoginId(sessUser.getLogin());
+            Parents parents = parentsDao.getProfileUsingLoginId(LoggedUserUtil.getUserId());
             int tempStudentId = parents.getStudentId();
             Student student = studentDao.getStudentUsingStudentId(tempStudentId);
             schoolId=String.valueOf(student.getStuSchoolId());
@@ -196,19 +250,19 @@ public class TaskController {
             standardId=request.getParameter("standardid");
             subjectId=request.getParameter("subjectid");
 
-            if(sessUser.getRole().equals("ROLE_SCHOOL_ADMIN")) {
-                School school = schoolDao.getSchoolUsingPrincipalEmail(sessUser.getLogin());
+            if(LoggedUserUtil.hasRole(RoleType.ROLE_SCHOOL_ADMIN)) {
+                School school = schoolDao.getSchoolUsingPrincipal(LoggedUserUtil.getUserId());
                 schoolId=String.valueOf(school.getSchoolId());
-            } else if(sessUser.getRole().equals("ROLE_HOD")) {
-                Hod hod = hodDao.getHodByLoginId(sessUser.getLogin());
+            } else if(LoggedUserUtil.hasRole(RoleType.ROLE_HOD)) {
+                Hod hod = hodDao.getHodByHodId(LoggedUserUtil.getUserId());
                 schoolId=String.valueOf(hod.getHodSchoolId());
-            }else if(sessUser.getRole().equals("ROLE_TEACHER")) {
-                Teacher teacher = teacherDao.getTeacherUsingLoginId(sessUser.getUserId());
+            }else if(LoggedUserUtil.hasRole(RoleType.ROLE_TEACHER)) {
+                Teacher teacher = teacherDao.getTeacherUsingTeacherId(LoggedUserUtil.getUserId());
                 schoolId=String.valueOf(teacher.getTeacherSchoolId());
             }
         }
         Map<String, String> params = new HashMap<String, String>();
-        params.put("syllabusDueDate", globalFunUtils.getDateTime());
+        params.put("syllabusDueDate", CalendarUtil.getDateInFormat("yyyy-MM-dd HH:mm:ss"));
         params.put("schoolId", schoolId);
         params.put("standardId", standardId);
         params.put("subjectId", subjectId);
@@ -216,7 +270,7 @@ public class TaskController {
         params.put("studentId", "0");
         params.put("taskName",request.getParameter("taskname"));
         List<Syllabus> syllabus = syllabusDao.getSyllabusListBySyllabusFilters(params);
-        Subject subject = subjectDao.getSubjectBySubjectId(Integer.parseInt(subjectId));
+        Subject subject = subjectDao.getSubjectBySubjectId(Long.parseLong(subjectId));
         model.addObject("subjectForm", subject);
         model.addObject("syllabusList", syllabus);
 
@@ -246,7 +300,7 @@ public class TaskController {
             standardId = request.getParameter("standardId");
         }
         Map<String, String> params = new HashMap<String, String>();
-        params.put("syllabusDueDate", globalFunUtils.getDateTime());
+        params.put("syllabusDueDate", CalendarUtil.getDateInFormat("yyyy-MM-dd HH:mm:ss"));
         params.put("schoolId", schoolId);
         params.put("standardId", standardId);
         params.put("subjectId", subjectId);
