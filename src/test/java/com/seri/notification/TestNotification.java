@@ -2,7 +2,6 @@ package com.seri.notification;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.FixMethodOrder;
@@ -16,11 +15,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.seri.common.CommonTypes;
 import com.seri.security.Role;
+import com.seri.security.UserDaoImpl;
 import com.seri.service.notification.Notification;
 import com.seri.service.notification.NotificationService;
 import com.seri.service.notification.RoleType;
 import com.seri.web.model.User;
-import com.seri.web.model.UserRoles;
 import com.seri.web.utils.CalendarUtil;
 
 
@@ -52,7 +51,7 @@ public class TestNotification {
 	@Test
 //	@Ignore
 	public void testGetUserNotification() {
-		List<Notification> notificatioList = notificationService.getNotificationForUser(sampleUser());
+		List<Notification> notificatioList = notificationService.getNotificationForUser(asampleUser());
 		assertEquals(4, notificatioList.size());
 	}
 	
@@ -67,9 +66,10 @@ public class TestNotification {
 		notification.setCreatedDate(CalendarUtil.getDate());
 		return notification;
 	}
-	@Ignore
-	public User sampleUser(){
-		Role role = new Role();
+	@Test
+//	@Ignore
+	public User asampleUser(){
+		/*Role role = new Role();
 		role.setRoleName(RoleType.ROLE_TEACHER);
 		UserRoles userRoles= new UserRoles();
 		userRoles.setRole(role);
@@ -78,8 +78,14 @@ public class TestNotification {
 		user.setId(3);
 		user.setUserRoles(Arrays.asList(userRoles));
 		user.setSchool(9);
-		user.setStandard("1,2");
+//		user.setStandard("1,2");
+		return user;*/
+		
+		UserDaoImpl dao = new UserDaoImpl();
+		User user = dao.loadUserByUsername("robmathur");
+		Role role = user.getDefaultRole();
 		return user;
+		
 	}
 
 }
