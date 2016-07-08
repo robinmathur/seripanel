@@ -92,22 +92,22 @@ public class User extends BaseEntity implements UserDetails {
     
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-//		if(null == authorities){
+		if(null == authorities){
 			List<Role> authorities  = new ArrayList<Role>();
 			for(UserRoles userRole : userRoles){
 				authorities.add(userRole.getRole());
 			}
-//		}
+		}
 		return authorities;
 	}
 	
 	public Role getDefaultRole(){
-//		if(null == defaultRole){
+		if(null == defaultRole){
 			for(UserRoles userRole : userRoles){
 				if(userRole.isDefault())
 					defaultRole=userRole.getRole();
 			}
-//		}
+		}
 		return defaultRole;
 	}
 	
