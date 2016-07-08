@@ -168,7 +168,11 @@ public class GlobalFunUtils {
     }
     
     public static List<Long> convertInLongList(String[] array){
-    	List<Long> longList = new ArrayList<Long>(array.length);
+    	List<Long> longList = new ArrayList<Long>();
+    	if(array == null){
+    		longList.add(0L);
+    		return longList;
+    	}
     	for(int i=0 ; i < array.length ; i++)
     		longList.add(Long.valueOf(array[i]));
     	return longList;
