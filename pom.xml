@@ -33,12 +33,15 @@
 	</properties>
 
 	<dependencies>
-	
-		<!-- <dependency>
-			<groupId>com.seri</groupId>
-			<artifactId>seri-services</artifactId>
-		</dependency> -->
-		
+
+		<!-- <dependency> <groupId>com.seri</groupId> <artifactId>seri-services</artifactId> 
+			</dependency> -->
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.7</version>
+		</dependency>
+
 		<!--Mokito + Spring Test -->
 		<dependency>
 			<groupId>org.mockito</groupId>

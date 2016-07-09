@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.google.gson.Gson;
 import com.seri.common.Gender;
 import com.seri.common.GenderPropertyEditorSupport;
 import com.seri.common.MyCustomNumberEditor;
@@ -37,6 +38,7 @@ import com.seri.web.dao.daoImpl.StudentDaoImpl;
 import com.seri.web.dao.daoImpl.SubjectDaoImpl;
 import com.seri.web.dao.daoImpl.SyllabusDaoImpl;
 import com.seri.web.dao.daoImpl.TeacherDaoImpl;
+import com.seri.web.dto.RatingTask;
 import com.seri.web.model.Hod;
 import com.seri.web.model.Parents;
 import com.seri.web.model.School;
@@ -285,5 +287,11 @@ public class SyllabusController {
             obj.put("result", false);
         }
         return obj.toJSONString();
+    }
+    @RequestMapping(value="/getStudentWork", method=RequestMethod.GET)
+    public @ResponseBody String getStudentWork(long standardId, long subjectId){
+    	List<RatingTask> ratingTaskList = syllabusDao.getWorkFromSyllabus(standardId, subjectId);
+    	String result = new Gson().toJson(ratingTaskList);
+    	return result;
     }
 }
