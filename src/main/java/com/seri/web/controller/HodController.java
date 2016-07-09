@@ -6,6 +6,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.seri.web.utils.GlobalFunUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -46,9 +48,13 @@ public class HodController {
     private HodDao hodDao = new HodDaoImpl();
     private DepartmentDao departmentDao = new DepartmentDaoImpl();
 
+    @Autowired
+    private GlobalFunUtils globalFunUtils;
+
     @RequestMapping(value = "/manage**", method = RequestMethod.GET)
     public ModelAndView manageHodPage(HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
+        globalFunUtils.getNotification(model);
         model.setViewName("hod/manage_hod");
         return model;
     }
@@ -152,7 +158,7 @@ public class HodController {
     @RequestMapping(value = "/update**", method = RequestMethod.GET)
     public ModelAndView updateHod(HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
-
+        globalFunUtils.getNotification(model);
         if(request.getParameter("id") == null)
             return new ModelAndView("redirect:manage_hod");
 

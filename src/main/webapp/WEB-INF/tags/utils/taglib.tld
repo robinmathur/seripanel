@@ -29,6 +29,16 @@
     </tag>
 
     <tag>
+        <name>propertyFetcher</name>
+        <tag-class>com.seri.web.utils.tags.PropertyFetcherTag</tag-class>
+        <body-content>scriptless</body-content>
+        <attribute>
+            <name>key</name>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
         <name>getCountryList</name>
         <tag-class>com.seri.web.utils.tags.CountrySelectorTag</tag-class>
         <body-content>scriptless</body-content>

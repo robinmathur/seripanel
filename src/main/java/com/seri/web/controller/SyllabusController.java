@@ -7,7 +7,11 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.seri.service.notification.Notification;
+import com.seri.service.notification.NotificationService;
+import com.seri.web.utils.GlobalFunUtils;
 import org.json.simple.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
@@ -61,6 +65,11 @@ public class SyllabusController {
     private StudentDao studentDao = new StudentDaoImpl();
     private SubjectDao subjectDao = new SubjectDaoImpl();
     private ParentsDao parentsDao = new ParentsDaoImpl();
+    @Autowired
+    private NotificationService notificationService;
+
+    @Autowired
+    private GlobalFunUtils globalFunUtils;
     
     @InitBinder
     public void initBinder(WebDataBinder binder)
@@ -137,6 +146,8 @@ public class SyllabusController {
             model.addObject("subjectId", subjectId);
             model.addObject("moduleId", moduleId);
 
+            globalFunUtils.getNotification(model);
+
             model.addObject("syllabusForm", syllabus);
             if (syllabus == null)
                 model.addObject("formAction", "/syllabus/addsyllabus");
@@ -168,6 +179,7 @@ public class SyllabusController {
         syllabusForm.setLastUpdatedBy(LoggedUserUtil.getUserId());
         syllabusForm.setLastUpdatedDate(CalendarUtil.getDate());
         syllabusForm.setTaskName("syllabus");
+        globalFunUtils.getNotification(model);
         syllabusDao.create(syllabusForm);
         model.setViewName("redirect:content?token=success&schoolid="+syllabusForm.getSchoolId()+"&standardid="+syllabusForm.getStandardId()+"&subjectid="+syllabusForm.getSubjectId()+"&moduleid="+syllabusForm.getModuleId());
         return model;
@@ -184,6 +196,7 @@ public class SyllabusController {
             Teacher teacher = teacherDao.getTeacherUsingTeacherId(LoggedUserUtil.getUserId());
             syllabusForm.setSchoolId(teacher.getTeacherSchoolId());
         }
+        globalFunUtils.getNotification(model);
         syllabusForm.setTaskId(Integer.parseInt(request.getParameter("taskId1")));
         syllabusForm.setLastUpdatedBy(LoggedUserUtil.getUserId());
         syllabusForm.setLastUpdatedDate(CalendarUtil.getDate());
@@ -196,6 +209,7 @@ public class SyllabusController {
     @RequestMapping(value = "/view**", method = RequestMethod.GET)
     public ModelAndView viewSyllabusPage(HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
+        globalFunUtils.getNotification(model);
         String schoolId="0", standardId="0", subjectId="0";
         if(LoggedUserUtil.hasAnyRole(RoleType.ROLE_SUP_ADMIN,RoleType.ROLE_SUB_ADMIN)) {
             if(request.getParameter("schoolid")==null || request.getParameter("standardid")==null || request.getParameter("subjectid")==null)

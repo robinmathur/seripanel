@@ -31,6 +31,7 @@ public class EmailController {
     @RequestMapping(value = "/compose**", method = RequestMethod.GET)
     public ModelAndView composePage(@ModelAttribute("emailForm")Email email, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
+        globalFunUtils.getNotification(model);
         email.setFromId(LoggedUserUtil.getEmailId());
         try{
             if(request.getParameter("forward") != null)
@@ -51,6 +52,7 @@ public class EmailController {
     @RequestMapping(value = "/sendemail**", method = RequestMethod.POST)
     public ModelAndView sendEmailPage(@ModelAttribute("emailForm")Email email, HttpServletResponse response, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
+        globalFunUtils.getNotification(model);
         String date = globalFunUtils.getDateTime();
         email.setSentDate(date);
         try {
@@ -67,6 +69,7 @@ public class EmailController {
     @RequestMapping(value = "/inbox**", method = RequestMethod.GET)
     public ModelAndView loginPage() {
         ModelAndView model = new ModelAndView();
+        globalFunUtils.getNotification(model);
         User dbUser = globalFunUtils.getLoggedInUserDetail();
         List<Email> recEmailList = emailDao.getEmailUsingTo(LoggedUserUtil.getEmailId());
         model.addObject("recEmailList", recEmailList);
@@ -77,6 +80,7 @@ public class EmailController {
     @RequestMapping(value = "/sent**", method = RequestMethod.GET)
     public ModelAndView sentPage() {
         ModelAndView model = new ModelAndView();
+        globalFunUtils.getNotification(model);
         User dbUser = globalFunUtils.getLoggedInUserDetail();
         List<Email> sentEmailList = emailDao.getEmailUsingFrom(LoggedUserUtil.getEmailId());
         model.addObject("sentEmailList", sentEmailList);
@@ -95,6 +99,7 @@ public class EmailController {
             dbEmail.setReciverDelStatus(1);
         emailDao.update(dbEmail);
         ModelAndView model = new ModelAndView();
+        globalFunUtils.getNotification(model);
         model.setViewName("email/inbox");
         return model;
     }

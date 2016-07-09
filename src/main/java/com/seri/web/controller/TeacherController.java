@@ -6,6 +6,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.seri.web.utils.GlobalFunUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -40,9 +42,13 @@ public class TeacherController {
     private HodDao hodDao = new HodDaoImpl();
     private StandardController standardController = new StandardController();
 
+    @Autowired
+    private GlobalFunUtils globalFunUtils;
+
     @RequestMapping(value = "/dashboard**", method = RequestMethod.GET)
     public ModelAndView dashboardPage(HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
+        globalFunUtils.getNotification(model);
         /*Student student = studentDao.getStudentUsingStudentLogin(sessUser.getLogin());
         List<Subject> subjectList = subjectDao.getSubjectByStandardId(student.getStuStandardId());
         model.addObject("subjectList", subjectList);*/
@@ -53,6 +59,7 @@ public class TeacherController {
     @RequestMapping(value = "/manage**", method = RequestMethod.GET)
     public ModelAndView manage(HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
+        globalFunUtils.getNotification(model);
         model.setViewName("teacher/manage_teacher");
         return model;
     }
@@ -152,7 +159,7 @@ public class TeacherController {
     @RequestMapping(value = "/update**", method = RequestMethod.GET)
     public ModelAndView updateTeacher(HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
-
+        globalFunUtils.getNotification(model);
         if(request.getParameter("id") == null)
             return new ModelAndView("redirect:manage_teacher");
 
@@ -187,6 +194,7 @@ public class TeacherController {
     @RequestMapping(value = "/viewprofile**", method = RequestMethod.GET)
     public ModelAndView viewProfile(HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
+        globalFunUtils.getNotification(model);
         Teacher teacherProfile = null;
         int teacherId = 0;
         if(LoggedUserUtil.hasRole(RoleType.ROLE_TEACHER)) {

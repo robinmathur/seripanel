@@ -21,16 +21,26 @@ import javax.mail.internet.MimeMessage;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
+import com.seri.service.notification.Notification;
+import com.seri.service.notification.NotificationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.seri.web.dao.daoImpl.UserDaoImpl;
 import com.seri.web.model.User;
+import org.springframework.stereotype.Component;
+import org.springframework.ui.Model;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Created by puneet on 02/04/16.
  */
+@Component
 public class GlobalFunUtils {
+
+    @Autowired
+    private NotificationService notificationService;
 
     public String getDateTime(){
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -165,6 +175,11 @@ public class GlobalFunUtils {
             userDetails = userDao.getUserUsingEmail(name);
         }
         return userDetails;
+    }
+
+    public void getNotification(ModelAndView model){
+        List<Notification> notificationList = notificationService.getNotificationForUser(LoggedUserUtil.getUser());
+        model.addObject("notificationList", notificationList);
     }
     
     public static List<Long> convertInLongList(String[] array){

@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.seri.web.utils.GlobalFunUtils;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -69,6 +70,9 @@ public class TaskController {
     
     @Autowired
     private RatingDao ratingDao;
+
+    @Autowired
+    private GlobalFunUtils globalFunUtils;
     
     @InitBinder
     public void initBinder(WebDataBinder binder)
@@ -88,6 +92,7 @@ public class TaskController {
         try {
         	
             ModelAndView model = new ModelAndView();
+            globalFunUtils.getNotification(model);
             long schoolId = 0;
             long standardId = 0;
             long subjectId = 0;
@@ -177,6 +182,7 @@ public class TaskController {
     @RequestMapping(value = "/addtask**", method = RequestMethod.POST)
     public ModelAndView addSyllabusPage(@ModelAttribute("taskForm") Syllabus taskForm) {
         ModelAndView model = new ModelAndView();
+        globalFunUtils.getNotification(model);
         if(LoggedUserUtil.hasRole(RoleType.ROLE_SCHOOL_ADMIN)){
             School school = schoolDao.getSchoolUsingPrincipal(LoggedUserUtil.getUserId());
             taskForm.setSchoolId(school.getSchoolId());
@@ -200,6 +206,7 @@ public class TaskController {
     @RequestMapping(value = "/edittask/**", method = RequestMethod.POST)
     public ModelAndView editSyllabusPage(@ModelAttribute("taskForm") Syllabus taskForm, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
+        globalFunUtils.getNotification(model);
         if(LoggedUserUtil.hasRole(RoleType.ROLE_SCHOOL_ADMIN)){
             School school = schoolDao.getSchoolUsingPrincipal(LoggedUserUtil.getUserId());
             taskForm.setSchoolId(school.getSchoolId());
@@ -219,6 +226,7 @@ public class TaskController {
     @RequestMapping(value = "/viewtask/**", method = RequestMethod.GET)
     public ModelAndView viewTaskPage(@ModelAttribute("taskForm") Syllabus taskForm, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
+        globalFunUtils.getNotification(model);
         String schoolId="0", standardId="0", subjectId="0";
         if(LoggedUserUtil.hasAnyRole(RoleType.ROLE_SUP_ADMIN,RoleType.ROLE_SUB_ADMIN)) {
             if(request.getParameter("schoolid")==null || request.getParameter("standardid")==null || request.getParameter("subjectid")==null)

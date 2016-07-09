@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,7 +32,9 @@ import com.seri.web.utils.LoggedUserUtil;
 @Controller
 @RequestMapping(value = "school")
 public class SchoolController {
-    private GlobalFunUtils globalFunUtils = new GlobalFunUtils();
+    @Autowired
+    private GlobalFunUtils globalFunUtils;
+
     private SchoolDao schoolDao = new SchoolDaoImpl();
     private DepartmentDao departmentDao = new DepartmentDaoImpl();
     private StandardDao standardDao = new StandardDaoImpl();
@@ -39,6 +42,8 @@ public class SchoolController {
     @RequestMapping(value = "/addschool**", method = RequestMethod.GET)
     public ModelAndView addSchoolPage(@ModelAttribute("schoolForm") School schoolForm) {
         ModelAndView model = new ModelAndView();
+        globalFunUtils.getNotification(model);
+
         model.addObject("schoolForm", schoolForm);
         model.addObject("formAction", "add");
         model.setViewName("school/add_update");
@@ -48,6 +53,7 @@ public class SchoolController {
     @RequestMapping(value = "/add**", method = RequestMethod.POST)
     public ModelAndView addPage(@ModelAttribute("schoolForm") School schoolForm) {
         ModelAndView model = new ModelAndView();
+        globalFunUtils.getNotification(model);
         Boolean errFlag = false;
         try {
             if (schoolDao.getSchoolUsingEmail(schoolForm.getSchoolEmail()) != null) {
@@ -85,6 +91,7 @@ public class SchoolController {
     @RequestMapping(value = "/manage**", method = RequestMethod.GET)
     public ModelAndView manageSchoolPage() {
         ModelAndView model = new ModelAndView();
+        globalFunUtils.getNotification(model);
         List<School> schoolList = schoolDao.getAllSchool();
         List<Standard> standardList = standardDao.getPrimaryStandard();
         model.addObject("standardList", standardList);
@@ -107,7 +114,7 @@ public class SchoolController {
             if(schoolForm == null)
                 throw new Exception();
             ModelAndView model = new ModelAndView();
-
+            globalFunUtils.getNotification(model);
             model.addObject("schoolForm", schoolForm);
             model.addObject("formAction", "edit");
             model.setViewName("school/add_update");
@@ -121,6 +128,7 @@ public class SchoolController {
     @RequestMapping(value = "/edit**", method = RequestMethod.POST)
     public ModelAndView editPage(@ModelAttribute("schoolForm") School schoolForm) {
         ModelAndView model = new ModelAndView();
+        globalFunUtils.getNotification(model);
         Boolean errFlag = false;
         try {
             if (schoolDao.getSchoolNotUsingSameEmail(schoolForm.getSchoolEmail(), schoolForm.getSchoolId()) != null) {
@@ -156,6 +164,7 @@ public class SchoolController {
     @RequestMapping(value = "updateadmin", method = RequestMethod.GET)
     public ModelAndView updateSchoolAdmin(){
         ModelAndView model = new ModelAndView();
+        globalFunUtils.getNotification(model);
         model.setViewName("login");
         return model;
     }

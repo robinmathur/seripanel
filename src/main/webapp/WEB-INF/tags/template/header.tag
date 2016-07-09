@@ -3,6 +3,7 @@
     <div class="logo">
         <a href=""><img src="${pageContext.request.contextPath}/resources/pages/images/serilogo.png" alt="" /></a>
     </div>
+
     <div class="headerinner">
         <ul class="headmenu">
             <li class="odd">
@@ -21,49 +22,30 @@
                     <li class="viewmore"><a href="messages.html">View More Messages</a></li>
                 </ul>
             </li>
+
             <li>
                 <a class="dropdown-toggle" data-toggle="dropdown" data-target="#">
-                    <span class="count">10</span>
+                    <span class="count">${fn:length(notificationList)}</span>
                     <span class="head-icon head-notification"></span>
                     <span class="headmenu-label">New Notification</span>
                 </a>
                 <ul class="dropdown-menu newusers">
-                    <li class="nav-header">New Users</li>
-                    <li>
-                        <a href="">
-                            <img src="${pageContext.request.contextPath}/resources/pages/images/photos/thumb1.png" alt="" class="userthumb" />
-                            <strong>Draniem Daamul</strong>
-                            <small>April 20, 2013</small>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="">
-                            <img src="${pageContext.request.contextPath}/resources/pages/images/photos/thumb2.png" alt="" class="userthumb" />
-                            <strong>Shamcey Sindilmaca</strong>
-                            <small>April 19, 2013</small>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="">
-                            <img src="${pageContext.request.contextPath}/resources/pages/images/photos/thumb3.png" alt="" class="userthumb" />
-                            <strong>Nusja Paul Nawancali</strong>
-                            <small>April 19, 2013</small>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="">
-                            <img src="${pageContext.request.contextPath}/resources/pages/images/photos/thumb4.png" alt="" class="userthumb" />
-                            <strong>Rose Cerona</strong>
-                            <small>April 18, 2013</small>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="">
-                            <img src="${pageContext.request.contextPath}/resources/pages/images/photos/thumb5.png" alt="" class="userthumb" />
-                            <strong>John Doe</strong>
-                            <small>April 16, 2013</small>
-                        </a>
-                    </li>
+                    <li class="nav-header">New Notifications</li>
+                    <c:forEach items="${notificationList}" var="notification">
+                        <li>
+                            <a href="">
+                                <%--<img src="${pageContext.request.contextPath}/resources/pages/images/photos/thumb1.png" alt="" class="userthumb" />--%>
+                                <strong><utilLibs:propertyFetcher key="${notification.notificationType}" /> </strong>
+                                <small>Due Date:
+                                    <fmt:parseDate value="${notification.dueDate}" pattern="yyyy-MM-dd HH:mm:ss" var="myDate"/>
+                                    <fmt:formatDate value="${myDate}" var="startFormat" pattern="yyyy-MM-dd"/>
+                                    ${startFormat}
+                                </small>
+                            </a>
+                        </li>
+                    </c:forEach>
+
+
                 </ul>
             </li>
             <li class="odd">

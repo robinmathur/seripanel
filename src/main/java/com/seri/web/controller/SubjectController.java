@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.seri.web.utils.GlobalFunUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +26,9 @@ import com.seri.web.utils.LoggedUserUtil;
 public class SubjectController {
 
     private SubjectDao subjectDao = new SubjectDaoImpl();
+
+    @Autowired
+    private GlobalFunUtils globalFunUtils;
 
     @RequestMapping(value = "/addsubject/", method = RequestMethod.GET)
     public @ResponseBody

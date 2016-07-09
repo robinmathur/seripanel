@@ -32,7 +32,7 @@ public class NotificationDaoImpl extends AbstractDao<Notification> implements No
 		query.setParameter("groupType", user.getDefaultRole().getRoleName());
 		query.setParameter("dueDate", CalendarUtil.getDate());
 		query.setParameter("schoolId", (long)user.getSchool());
-		query.setParameter("standardId", GlobalFunUtils.convertInLongList(StringUtils.split(user.getStandard(), ",")));
+		query.setParameter("standardId", GlobalFunUtils.convertInLongList(StringUtils.split(user.getStandard(),",")));
 		List<Notification> notificationList = query.getResultList();
 		return notificationList;
 	}

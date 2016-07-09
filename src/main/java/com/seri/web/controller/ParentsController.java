@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.seri.web.utils.GlobalFunUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -43,10 +45,13 @@ public class ParentsController {
     private UserDao userDao = new UserDaoImpl();
     private SubjectDao subjectDao = new SubjectDaoImpl();
 
+    @Autowired
+    private GlobalFunUtils globalFunUtils;
+
     @RequestMapping(value = "/update**", method = RequestMethod.GET)
     public ModelAndView updateParent(HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
-
+        globalFunUtils.getNotification(model);
         if(request.getParameter("id") == null)
             return new ModelAndView("redirect:manage_student");
 
@@ -78,6 +83,7 @@ public class ParentsController {
     @RequestMapping(value = "/dashboard**", method = RequestMethod.GET)
     public ModelAndView dashboardPage(HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
+        globalFunUtils.getNotification(model);
         Parents parents = parentsDao.getProfileUsingLoginId(LoggedUserUtil.getUserId());
         Student student = studentDao.getStudentUsingStudentId(parents.getStudentId());
         List<Subject> subjectList = subjectDao.getSubjectByStandardId(student.getStuStandardId());

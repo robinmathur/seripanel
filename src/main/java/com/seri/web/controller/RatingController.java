@@ -6,6 +6,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.seri.web.utils.GlobalFunUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +27,9 @@ import com.seri.web.utils.LoggedUserUtil;
 @RequestMapping(value = "rating")
 public class RatingController {
     private RatingDao ratingDao = new RatingDaoImpl();
+
+    @Autowired
+    private GlobalFunUtils globalFunUtils;
 
 
     @RequestMapping(value = "/addrating/", method = RequestMethod.GET)

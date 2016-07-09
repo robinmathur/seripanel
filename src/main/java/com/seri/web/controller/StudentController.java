@@ -6,6 +6,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.seri.web.utils.GlobalFunUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -48,9 +50,14 @@ public class StudentController {
     private SubjectDao subjectDao = new SubjectDaoImpl();
     private TeacherDao teacherDao = new TeacherDaoImpl();
 
+    @Autowired
+    GlobalFunUtils globalFunUtils;
+
     @RequestMapping(value = "/dashboard**", method = RequestMethod.GET)
     public ModelAndView dashboardPage(HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
+        globalFunUtils.getNotification(model);
+
         Student student = studentDao.getStudentUsingStudentId(LoggedUserUtil.getUserId());
         List<Subject> subjectList = subjectDao.getSubjectByStandardId(student.getStuStandardId());
         model.addObject("subjectList", subjectList);
@@ -61,6 +68,7 @@ public class StudentController {
     @RequestMapping(value = "/manage**", method = RequestMethod.GET)
     public ModelAndView manageStudentPage(HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
+        globalFunUtils.getNotification(model);
         model.setViewName("student/manage_student");
         return model;
     }
@@ -205,7 +213,7 @@ public class StudentController {
     @RequestMapping(value = "/update**", method = RequestMethod.GET)
     public ModelAndView updateTeacher(HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
-
+        globalFunUtils.getNotification(model);
         if(request.getParameter("id") == null)
             return new ModelAndView("redirect:manage_student");
 

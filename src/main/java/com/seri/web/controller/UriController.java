@@ -6,6 +6,8 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.seri.web.utils.GlobalFunUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
@@ -58,6 +60,9 @@ public class UriController {
     private StudentDao studentDao = new StudentDaoImpl();
     private ParentsDao parentsDao = new ParentsDaoImpl();
     private HodDao hodDao = new HodDaoImpl();
+
+    @Autowired
+    private GlobalFunUtils globalFunUtils;
     
     @InitBinder
     public void initBinder(WebDataBinder binder)
@@ -75,6 +80,7 @@ public class UriController {
     @RequestMapping(value = "/login**", method = RequestMethod.GET)
     public ModelAndView loginPage() {
         ModelAndView model = new ModelAndView();
+        globalFunUtils.getNotification(model);
         model.setViewName("login");
         return model;
     }
@@ -82,6 +88,7 @@ public class UriController {
     @RequestMapping(value = "/adduser**", method = RequestMethod.GET)
     public ModelAndView adminPage() {
         ModelAndView model = new ModelAndView();
+        globalFunUtils.getNotification(model);
         model.setViewName("user/adduser");
         return model;
 
@@ -178,6 +185,7 @@ public class UriController {
     @RequestMapping(value = "/addpassword**", method = RequestMethod.POST)
     public ModelAndView addPasswordFirstTimeUser(@ModelAttribute("userForm") User userForm, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
+        globalFunUtils.getNotification(model);
         userController.createPassword(request);
         model.addObject("userDetails", userForm);
         model.setViewName("user/createpassword");
@@ -187,6 +195,7 @@ public class UriController {
     @RequestMapping(value = "/updateprofile**", method = RequestMethod.GET)
     public ModelAndView updateUserPage() {
         ModelAndView model = new ModelAndView();
+        globalFunUtils.getNotification(model);
         model.addObject("userForm", LoggedUserUtil.getUser());
         if(LoggedUserUtil.hasRole(RoleType.ROLE_SUP_ADMIN))
         {

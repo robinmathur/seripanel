@@ -6,6 +6,9 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.seri.service.notification.Notification;
+import com.seri.service.notification.NotificationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +35,8 @@ public class StandardController {
 
     private SchoolDao schoolDao = new SchoolDaoImpl();
     private StandardDao standardDao = new StandardDaoImpl();
+    @Autowired
+    private NotificationService notificationService;
 
     @RequestMapping(value = "/addstandard**", method = RequestMethod.GET)
     public ModelAndView addStandardPage(@ModelAttribute("standardForm") Standard standardForm) {
@@ -81,6 +86,8 @@ public class StandardController {
     public ModelAndView manageStandardPage(@ModelAttribute("schoolForm") School schoolForm) {
         ModelAndView model = new ModelAndView();
         model.setViewName("standard/manage_standard");
+        List<Notification> notificationList = notificationService.getNotificationForUser(LoggedUserUtil.getUser());
+        model.addObject("notificationList", notificationList);
         return model;
     }
 
