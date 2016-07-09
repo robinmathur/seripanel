@@ -14,7 +14,7 @@
             <div class="par control-group ${emailErrClass}">
                 <label for="login" class="control-label">Email Id</label>
                 <div class="controls">
-                    <input type="text" class="span4 " id="login" name="login" value="${userForm.login}" placeholder="Enter Email Id">
+                    <input type="text" class="span4 " id="email" name="email" value="${userForm.email}" placeholder="Enter Email Id">
                     <span class="help-inline">${emailErrrrMsg}</span>
                 </div>
             </div><!--par-->
@@ -54,8 +54,8 @@
             <p>
                 <label>Gender</label>
                 <span class="formwrapper">
-                    <input type="radio" name="gender" value="male" checked /> Male &nbsp; &nbsp;
-                    <input type="radio" name="gender" value="female" /> Female
+                    <input type="radio" name="gender" value="MALE" checked /> Male &nbsp; &nbsp;
+                    <input type="radio" name="gender" value="FEMALE" /> Female
                 </span>
             </p>
 

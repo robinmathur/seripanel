@@ -11,6 +11,7 @@
 
 <script>
     $(document).ready(function(){
+    	$( ".date-field" ).datepicker({dateFormat:"yy-mm-dd"});
         syllabus.content();
         utils.schoolSubsSelector("standardId", "subjectIdContainer", "subjectId", "subjectId", "subjectId", "${subjectId}");
         tasks.schoolChange();tasks.standardChange();tasks.subjectChange();tasks.taskNameChange();tasks.teacherCustomSubjectChange();
@@ -71,7 +72,7 @@
 
             <p>
                 <label>Due Date</label>
-                <span class="field"><input type="text" name="taskDueDate" id="syllabusDueDate" value="${syllabusForm.taskDueDate}" class="input-large" placeholder="Select Date" /></span>
+                <span class="field"><input type="text" name="taskDueDate" id="syllabusDueDate" value="${syllabusForm.taskDueDate}" class="input-large date-field" placeholder="Select Date" /></span>
             </p>
         </div>
 

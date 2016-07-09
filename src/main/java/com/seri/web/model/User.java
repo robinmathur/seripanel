@@ -1,22 +1,49 @@
 package com.seri.web.model;
 
-import javax.persistence.*;
-import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import com.seri.common.BaseEntity;
+import com.seri.common.Gender;
+import com.seri.security.Role;
+import com.seri.service.notification.RoleType;
 
 /**
  * Created by puneet on 03/04/16.
  */
 @Entity
 @Table(name = "USER")
-public class User implements Serializable {
-    @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
-    @Column(name = "USER_ID")
-    private int userId;
-    @Column(name = "LOGIN")
-    private String login;
-    @Column(name = "ROLE")
-    private String role;
+public class User extends BaseEntity implements UserDetails {
+    
+	private static final long serialVersionUID = 1L;
+    @Column(name = "USERNAME")
+    private String username;
+    @Column(name = "EMAIL")
+    private String email;
+//    @Column(name = "ROLE")
+//    private String role;
+    @Column(name = "PASSWORD")
+    private String password;
     @Column(name = "F_NAME")
     private String fName;
     @Column(name = "M_NAME")
@@ -24,161 +51,245 @@ public class User implements Serializable {
     @Column(name = "L_NAME")
     private String lName;
     @Column(name = "DOB")
-    private String dob;
+    @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date dob;
     @Column(name = "PHOTO")
     private String photo;
     @Column(name = "GENDER")
-    private String gender;
-    @Column(name = "STATUS")
-    private int status;
-    @Column(name = "CREATED_BY")
-    private String createdBy;
-    @Column(name = "CREATED_DATE")
-    private String createdDate;
-    @Column(name = "LAST_UPDATED_BY")
-    private String lastUpdatedBy;
-    @Column(name = "LAST_UPDATED_DATE")
-    private String lastUpdatedDate;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
+//    @Column(name = "STATUS")
+//    private int status;
     @Column(name = "PASSWORD_TOKEN")
     private String passwordToken;
     @Column(name = "FIRST_RESET")
     private int firstReset;
-    @Column(name = "PASSWORD")
-    private String password;
+    @Column(name = "SCHOOL")
+    private int school;
+    @Column(name = "STANDARD")
+    private String standard;
+    
+    @Transient
+    private List<Role> authorities;
+    @Transient
+    private Role defaultRole;
+    @Transient
+    private List<RoleType> roleTypeList;
+    
+    
+    @Column(name = "ACCOUNT_NON_EXPIRED")
+    private boolean accountNonExpired = true;
+    @Column(name = "ACCOUNT_NOT_LOCKED")
+    private boolean accountNonLocked = true;
+    @Column(name = "CREDENTIALS_NON_EXPIRED")
+    private boolean credentialsNonExpired = true;
+    @Column(name = "ENABLED")
+    private boolean enabled = true;
+    
+    @OneToMany(mappedBy="primaryKey.user", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+    private List<UserRoles> userRoles = new ArrayList<UserRoles>();
 
-    public int getUserId() {
-        return userId;
-    }
+    
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		if(null == authorities){
+			authorities  = new ArrayList<Role>();
+			for(UserRoles userRole : userRoles){
+				authorities.add(userRole.getRole());
+			}
+			
+		}
+		return authorities;
+	}
+	
+	public Role getDefaultRole(){
+		if(null == defaultRole){
+			for(UserRoles userRole : userRoles){
+				if(userRole.isDefault())
+					defaultRole=userRole.getRole();
+			}
+		}
+		return defaultRole;
+	}
+	
+	public List<RoleType> getRoleTypeList(){
+		if(null == roleTypeList){
+			roleTypeList = new ArrayList<RoleType>();
+			for(UserRoles userRole : userRoles){
+				roleTypeList.add(userRole.getRole().getRoleName());
+			}
+		}
+		return roleTypeList;
+	}
 
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
+	@Override
+	public String getUsername() {
+		return username;
+	}
 
-    public String getLogin() {
-        return login;
-    }
+	@Override
+	public boolean isAccountNonExpired() {
+		return accountNonExpired;
+	}
 
-    public void setLogin(String login) {
-        this.login = login;
-    }
+	@Override
+	public boolean isAccountNonLocked() {
+		return accountNonLocked;
+	}
 
-    public String getRole() {
-        return role;
-    }
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return credentialsNonExpired;
+	}
 
-    public void setRole(String role) {
-        this.role = role;
-    }
+	@Override
+	public boolean isEnabled() {
+		return enabled;
+	}
 
-    public String getfName() {
-        return fName;
-    }
+	public String getPassword() {
+		return password;
+	}
 
-    public void setfName(String fName) {
-        this.fName = fName;
-    }
+	public String getfName() {
+		return fName;
+	}
 
-    public String getmName() {
-        return mName;
-    }
+	public String getmName() {
+		return mName;
+	}
 
-    public void setmName(String mName) {
-        this.mName = mName;
-    }
+	public String getlName() {
+		return lName;
+	}
 
-    public String getlName() {
-        return lName;
-    }
+	public Date getDob() {
+		return dob;
+	}
 
-    public void setlName(String lName) {
-        this.lName = lName;
-    }
+	public String getPhoto() {
+		return photo;
+	}
 
-    public String getDob() {
-        return dob;
-    }
+	public Gender getGender() {
+		return gender;
+	}
 
-    public void setDob(String dob) {
-        this.dob = dob;
-    }
+	public String getPasswordToken() {
+		return passwordToken;
+	}
 
-    public String getPhoto() {
-        return photo;
-    }
+	public int getFirstReset() {
+		return firstReset;
+	}
 
-    public void setPhoto(String photo) {
-        this.photo = photo;
-    }
+	public void setUsername(String username) {
+		this.username = username;
+	}
 
-    public String getGender() {
-        return gender;
-    }
+	public void setPassword(String password) {
+		this.password = password;
+	}
 
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
+	public void setfName(String fName) {
+		this.fName = fName;
+	}
 
-    public int getStatus() {
-        return status;
-    }
+	public void setmName(String mName) {
+		this.mName = mName;
+	}
 
-    public void setStatus(int status) {
-        this.status = status;
-    }
+	public void setlName(String lName) {
+		this.lName = lName;
+	}
 
-    public String getCreatedBy() {
-        return createdBy;
-    }
+	public void setDob(Date dob) {
+		this.dob = dob;
+	}
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
+	public void setPhoto(String photo) {
+		this.photo = photo;
+	}
 
-    public String getCreatedDate() {
-        return createdDate;
-    }
+	public void setGender(Gender gender) {
+		this.gender = gender;
+	}
 
-    public void setCreatedDate(String createdDate) {
-        this.createdDate = createdDate;
-    }
+	public void setPasswordToken(String passwordToken) {
+		this.passwordToken = passwordToken;
+	}
 
-    public String getLastUpdatedBy() {
-        return lastUpdatedBy;
-    }
+	public void setFirstReset(int firstReset) {
+		this.firstReset = firstReset;
+	}
 
-    public void setLastUpdatedBy(String lastUpdatedBy) {
-        this.lastUpdatedBy = lastUpdatedBy;
-    }
+	public void setAuthorities(List<Role> authorities) {
+		this.authorities = authorities;
+	}
 
-    public String getLastUpdatedDate() {
-        return lastUpdatedDate;
-    }
+	public void setAccountNonExpired(boolean accountNonExpired) {
+		this.accountNonExpired = accountNonExpired;
+	}
 
-    public void setLastUpdatedDate(String lastUpdatedDate) {
-        this.lastUpdatedDate = lastUpdatedDate;
-    }
+	public void setAccountNonLocked(boolean accountNonLocked) {
+		this.accountNonLocked = accountNonLocked;
+	}
 
-    public String getPasswordToken() {
-        return passwordToken;
-    }
+	public void setCredentialsNonExpired(boolean credentialsNonExpired) {
+		this.credentialsNonExpired = credentialsNonExpired;
+	}
 
-    public void setPasswordToken(String passwordToken) {
-        this.passwordToken = passwordToken;
-    }
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
 
-    public int getFirstReset() {
-        return firstReset;
-    }
+	public boolean getEnabled() {
+		return enabled;
+	}
+	public int getSchool() {
+		return school;
+	}
 
-    public void setFirstReset(int firstReset) {
-        this.firstReset = firstReset;
-    }
+	public String getStandard() {
+		return standard;
+	}
 
-    public String getPassword() {
-        return password;
-    }
+	public void setSchool(int school) {
+		this.school = school;
+	}
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+	public void setStandard(String standard) {
+		this.standard = standard;
+	}
+
+	public List<UserRoles> getUserRoles() {
+		return userRoles;
+	}
+
+	public void setUserRoles(List<UserRoles> userRoles) {
+		this.userRoles = userRoles;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	@Override
+	public String toString() {
+		return "User [username=" + username + ", email=" + email + ", password=" + password + ", fName=" + fName
+				+ ", mName=" + mName + ", lName=" + lName + ", dob=" + dob + ", photo=" + photo + ", gender=" + gender
+				+ ", passwordToken=" + passwordToken + ", firstReset=" + firstReset + ", school=" + school
+				+ ", standard=" + standard + ", authorities=" + authorities + ", defaultRole=" + defaultRole
+				+ ", roleTypeList=" + roleTypeList + ", accountNonExpired=" + accountNonExpired + ", accountNonLocked="
+				+ accountNonLocked + ", credentialsNonExpired=" + credentialsNonExpired + ", enabled=" + enabled
+				+ ", userRoles=" + userRoles + "]";
+	}
+	
+	
+	
 }

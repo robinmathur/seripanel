@@ -1,9 +1,8 @@
 package com.seri.web.dao;
 
-import com.seri.web.model.Standard;
-import com.seri.web.model.Subject;
-
 import java.util.List;
+
+import com.seri.web.model.Subject;
 
 /**
  * Created by puneet on 29/05/16.
@@ -14,7 +13,7 @@ public interface SubjectDao {
 
     public Boolean update(Subject subject);
 
-    public Subject getSubjectBySubjectId(int id);
+    public Subject getSubjectBySubjectId(long id);
 
     public List<Subject> getSubjectByStandardId(int id);
 

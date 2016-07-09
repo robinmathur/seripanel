@@ -1,24 +1,24 @@
 package com.seri.web.controller;
 
-import com.seri.web.dao.RatingDao;
-import com.seri.web.dao.SchoolDao;
-import com.seri.web.dao.daoImpl.RatingDaoImpl;
-import com.seri.web.dao.daoImpl.SchoolDaoImpl;
-import com.seri.web.model.Rating;
-import com.seri.web.model.School;
-import com.seri.web.model.User;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import com.seri.web.utils.GlobalFunUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.seri.web.dao.RatingDao;
+import com.seri.web.dao.daoImpl.RatingDaoImpl;
+import com.seri.web.model.Rating;
+import com.seri.web.utils.CalendarUtil;
+import com.seri.web.utils.LoggedUserUtil;
 
 /**
  * Created by puneet on 08/06/16.
@@ -26,23 +26,23 @@ import java.util.Map;
 @Controller
 @RequestMapping(value = "rating")
 public class RatingController {
-    private GlobalFunUtils globalFunUtils = new GlobalFunUtils();
     private RatingDao ratingDao = new RatingDaoImpl();
+
+    @Autowired
+    private GlobalFunUtils globalFunUtils;
 
 
     @RequestMapping(value = "/addrating/", method = RequestMethod.GET)
     public @ResponseBody
     String getTeacherListing(@ModelAttribute("rating") Rating rating, HttpServletRequest request) {
-        User sessUser = globalFunUtils.getLoggedInUserDetail();
         Boolean errFlag = false;
         try {
             Map<String, Object> params = new HashMap<String, Object>();
 
-            String dateTime = globalFunUtils.getDateTime();
-            rating.setCreatedBy(sessUser.getLogin());
-            rating.setCreatedDate(dateTime);
-            rating.setLastUpdatedBy(sessUser.getLogin());
-            rating.setLastUpdatedDate(dateTime);
+            rating.setCreatedBy(LoggedUserUtil.getUserId());
+            rating.setCreatedDate(CalendarUtil.getDate());
+            rating.setLastUpdatedBy(LoggedUserUtil.getUserId());
+            rating.setLastUpdatedDate(CalendarUtil.getDate());
 
             params.put("studentId", rating.getStudentId());
             params.put("entityId", rating.getEntityId());

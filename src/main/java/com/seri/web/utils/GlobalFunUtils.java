@@ -1,26 +1,46 @@
 package com.seri.web.utils;
 
-import com.seri.web.dao.daoImpl.UserDaoImpl;
-import com.seri.web.model.User;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-
-import javax.mail.*;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import javax.persistence.EntityManager;
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
+
+import com.seri.service.notification.Notification;
+import com.seri.service.notification.NotificationService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+import com.seri.web.dao.daoImpl.UserDaoImpl;
+import com.seri.web.model.User;
+import org.springframework.stereotype.Component;
+import org.springframework.ui.Model;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Created by puneet on 02/04/16.
  */
+@Component
 public class GlobalFunUtils {
+
+    @Autowired
+    private NotificationService notificationService;
 
     public String getDateTime(){
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -34,29 +54,32 @@ public class GlobalFunUtils {
             em.getTransaction().rollback();
     }
 
-    public String getMd5Hex(String str) throws NoSuchAlgorithmException {
-        String password = str;
-
-        MessageDigest md = MessageDigest.getInstance("MD5");
-        md.update(password.getBytes());
-
-        byte byteData[] = md.digest();
-
-        //convert the byte to hex format method 1
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < byteData.length; i++) {
-            sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
-        }
-
-        //System.out.println("Digest(in hex format):: " + sb.toString());
-
+    public static String getMd5Hex(String inputString) {
+        
         //convert the byte to hex format method 2
-        StringBuffer hexString = new StringBuffer();
-        for (int i=0;i<byteData.length;i++) {
-            String hex=Integer.toHexString(0xff & byteData[i]);
-            if(hex.length()==1) hexString.append('0');
-            hexString.append(hex);
-        }
+		StringBuffer hexString = new StringBuffer();;
+		try {
+			MessageDigest md = MessageDigest.getInstance("MD5");
+			md.update(inputString.getBytes());
+
+			byte byteData[] = md.digest();
+
+			//convert the byte to hex format method 1
+			StringBuffer sb = new StringBuffer();
+			for (int i = 0; i < byteData.length; i++) {
+			    sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
+			}
+
+			//System.out.println("Digest(in hex format):: " + sb.toString());
+
+			for (int i=0;i<byteData.length;i++) {
+			    String hex=Integer.toHexString(0xff & byteData[i]);
+			    if(hex.length()==1) hexString.append('0');
+			    hexString.append(hex);
+			}
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
         return hexString.toString();
     }
 
@@ -114,7 +137,7 @@ public class GlobalFunUtils {
         return true;
     }
 
-    public String getSiteUrl(HttpServletRequest request) throws IOException {
+    public static String getSiteUrl(HttpServletRequest request) throws IOException {
 
         String path = request.getContextPath();
 
@@ -153,4 +176,21 @@ public class GlobalFunUtils {
         }
         return userDetails;
     }
+
+    public void getNotification(ModelAndView model){
+        List<Notification> notificationList = notificationService.getNotificationForUser(LoggedUserUtil.getUser());
+        model.addObject("notificationList", notificationList);
+    }
+    
+    public static List<Long> convertInLongList(String[] array){
+    	List<Long> longList = new ArrayList<Long>();
+    	if(array == null){
+    		longList.add(0L);
+    		return longList;
+    	}
+    	for(int i=0 ; i < array.length ; i++)
+    		longList.add(Long.valueOf(array[i]));
+    	return longList;
+    }
+    
 }

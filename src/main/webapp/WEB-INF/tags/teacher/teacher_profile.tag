@@ -8,13 +8,13 @@
     <h4 class="widgettitle">Teacher Profile</h4>
     <div class="widgetcontent">
         <form class="stdform" action="/${formAction}" name="teacherForm" method="post">
-            <input type="hidden" name="tLoginId" value="${userForm.userId}" />
+            <input type="hidden" name="tLoginId" value="${userForm.id}" />
             <input type="hidden" name="p" value="${param.p}">
             <input type="hidden" name="rpp" value="${param.rpp}">
             <div class="par control-group ${emailErrClass}">
-                <label for="login" class="control-label">Email Id</label>
+                <label for="email" class="control-label">Email Id</label>
                 <div class="controls">
-                    <input type="text" class="span4 " id="login" name="login" readonly="readonly" value="${userForm.login}" placeholder="Enter Email Id">
+                    <input type="text" class="span4 " id="email" name="email" readonly="readonly" value="${userForm.email}" placeholder="Enter Email Id">
                     <span class="help-inline">${emailErrrrMsg}</span>
                 </div>
             </div><!--par-->
@@ -46,7 +46,8 @@
             <div class="par control-group">
                 <label for="dob" class="control-label">Date of Birth</label>
                 <div class="controls">
-                    <input type="text" class="span4" id="dob" name="dob" value="${userForm.dob}" readonly="readonly" readonly="readonly" placeholder="Enter Date of Birth">
+                    <input type="text" class="span4" id="dob" name="dob" value="<fmt:formatDate pattern="yyyy-MM-dd" 
+            value="${userForm.dob}" />" readonly="readonly" readonly="readonly" placeholder="Enter Date of Birth">
                     <span class="help-inline"></span>
                 </div>
             </div><!--par-->

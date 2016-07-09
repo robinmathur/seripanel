@@ -1,24 +1,22 @@
 package com.seri.web.controller;
 
-import com.seri.web.dao.SubjectDao;
-import com.seri.web.dao.UserDao;
-import com.seri.web.dao.daoImpl.SubjectDaoImpl;
-import com.seri.web.dao.daoImpl.UserDaoImpl;
-import com.seri.web.model.School;
-import com.seri.web.model.Standard;
-import com.seri.web.model.Subject;
-import com.seri.web.model.User;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
 import com.seri.web.utils.GlobalFunUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.seri.web.dao.SubjectDao;
+import com.seri.web.dao.daoImpl.SubjectDaoImpl;
+import com.seri.web.model.Subject;
+import com.seri.web.utils.CalendarUtil;
+import com.seri.web.utils.LoggedUserUtil;
 
 /**
  * Created by puneet on 29/05/16.
@@ -27,9 +25,10 @@ import java.util.Map;
 @RequestMapping(value = "subject")
 public class SubjectController {
 
-    private GlobalFunUtils globalFunUtils = new GlobalFunUtils();
-    private UserDao userDao = new UserDaoImpl();
     private SubjectDao subjectDao = new SubjectDaoImpl();
+
+    @Autowired
+    private GlobalFunUtils globalFunUtils;
 
     @RequestMapping(value = "/addsubject/", method = RequestMethod.GET)
     public @ResponseBody
@@ -39,18 +38,16 @@ public class SubjectController {
             int standardId = Integer.parseInt(request.getParameter("standardId"));
             int isCompulsary = Integer.parseInt(request.getParameter("isCompulsary"));
             int status = Integer.parseInt(request.getParameter("status"));
-            User sessUser = globalFunUtils.getLoggedInUserDetail();
-            String dateTime = globalFunUtils.getDateTime();
 
             Subject subject = new Subject();
             subject.setIsCompulsary(isCompulsary);
             subject.setStandardId(standardId);
             subject.setSubjectName(name);
             subject.setStatus(status);
-            subject.setCreatedBy(sessUser.getLogin());
-            subject.setCreatedDate(dateTime);
-            subject.setLastUpdatedBy(sessUser.getLogin());
-            subject.setLastUpdatedDate(dateTime);
+            subject.setCreatedBy(LoggedUserUtil.getUserId());
+            subject.setCreatedDate(CalendarUtil.getDate());
+            subject.setLastUpdatedBy(LoggedUserUtil.getUserId());
+            subject.setLastUpdatedDate(CalendarUtil.getDate());
             subject.setEntityName("subject");
 
             if(request.getParameter("subjectId") != null) {
@@ -174,14 +171,12 @@ public class SubjectController {
     @RequestMapping(value = "/addmodule/", method = RequestMethod.POST)
     public @ResponseBody
     String addModuleFunction(@ModelAttribute("subjectForm") Subject subject, HttpServletRequest request) {
-        String dateTime = globalFunUtils.getDateTime();
-        User sessUser = globalFunUtils.getLoggedInUserDetail();
         subject.setIsCompulsary(1);
         subject.setStatus(1);
-        subject.setCreatedDate(dateTime);
-        subject.setCreatedBy(sessUser.getLogin());
-        subject.setLastUpdatedBy(sessUser.getLogin());
-        subject.setLastUpdatedDate(dateTime);
+        subject.setCreatedDate(CalendarUtil.getDate());
+        subject.setCreatedBy(LoggedUserUtil.getUserId());
+        subject.setLastUpdatedBy(LoggedUserUtil.getUserId());
+        subject.setLastUpdatedDate(CalendarUtil.getDate());
         subjectDao.create(subject);
         return String.valueOf(subject.getSubjectId());
     }
@@ -189,12 +184,10 @@ public class SubjectController {
     @RequestMapping(value = "/editmodule/", method = RequestMethod.POST)
     public @ResponseBody
     String editModuleFunction(@ModelAttribute("subjectForm") Subject moduleForm, HttpServletRequest request) {
-        String dateTime = globalFunUtils.getDateTime();
-        User sessUser = globalFunUtils.getLoggedInUserDetail();
         Subject module = subjectDao.getSubjectBySubjectId(moduleForm.getSubjectId());
         module.setSubjectName(moduleForm.getSubjectName());
-        module.setLastUpdatedBy(sessUser.getLogin());
-        module.setLastUpdatedDate(dateTime);
+        module.setLastUpdatedBy(LoggedUserUtil.getUserId());
+        module.setLastUpdatedDate(CalendarUtil.getDate());
         subjectDao.update(module);
         return String.valueOf(module.getSubjectId());
     }

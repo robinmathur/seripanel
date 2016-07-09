@@ -1,14 +1,15 @@
 package com.seri.web.dao.daoImpl;
 
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+
 import com.seri.web.dao.HodDao;
 import com.seri.web.model.Hod;
 import com.seri.web.utils.DbCon;
 import com.seri.web.utils.GlobalFunUtils;
-
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by puneet on 24/05/16.
@@ -43,7 +44,7 @@ public class HodDaoImpl implements HodDao {
         hodDetails.setPhoto(hod.getPhoto());
 
         hodDetails.setDob(hod.getDob());
-        hodDetails.setHodLoginId(hod.getHodLoginId());
+        hodDetails.setEmail(hod.getEmail());
         hodDetails.setHodDepartmentId(hod.getHodDepartmentId());
 
         hodDetails.setCreatedBy(hod.getCreatedBy());
@@ -83,7 +84,7 @@ public class HodDaoImpl implements HodDao {
     }
 
     @Override
-    public Hod getHodByHodId(int hodId) {
+    public Hod getHodByHodId(long hodId) {
         EntityManager em = DbCon.getEntityManager();
         Query ui =  em.createQuery("select c from Hod c where c.hodId="+hodId);
         em.clear();
@@ -94,7 +95,7 @@ public class HodDaoImpl implements HodDao {
     }
 
     @Override
-    public Hod getHodByUserId(int userId) {
+    public Hod getHodByUserId(long userId) {
         EntityManager em = DbCon.getEntityManager();
         Query ui =  em.createQuery("select c from Hod c where c.hodUserId="+userId);
         em.clear();

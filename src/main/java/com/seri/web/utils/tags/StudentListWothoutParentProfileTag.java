@@ -19,7 +19,6 @@ import java.util.List;
 public class StudentListWothoutParentProfileTag extends SimpleTagSupport {
 
     private String ctrlName;
-    private GlobalFunUtils globalFunUtils = new GlobalFunUtils();
     private StudentDao studentDao = new StudentDaoImpl();
 
     public void setCtrlName(String ctrlName) {
@@ -32,7 +31,7 @@ public class StudentListWothoutParentProfileTag extends SimpleTagSupport {
         if(studentList != null) {
             selectCtrl+= "<option value='0'>-Select Student-</option>";
             for (Student student : studentList) {
-                selectCtrl += "<option value='" + student.getStudentId() + "'>" + student.getfName() +" "+ student.getlName() + " ("+student.getStudentLoginId()+") </option>";
+                selectCtrl += "<option value='" + student.getStudentId() + "'>" + student.getfName() +" "+ student.getlName() + " ("+student.getUserId()+") </option>";
             }
         } else {
             selectCtrl+= "<option value='0'>-No Student Found without Parent Profile-</option>";

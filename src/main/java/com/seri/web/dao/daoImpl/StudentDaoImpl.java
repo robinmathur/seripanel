@@ -48,7 +48,7 @@ public class StudentDaoImpl implements StudentDao {
         student1.setLastUpdatedBy(student.getLastUpdatedBy());
         student1.setLastUpdatedDate(student.getLastUpdatedDate());
         student1.setCreatedDate(student.getCreatedDate());
-        student1.setParentLoginId(student.getParentLoginId());
+        student1.setParentId(student.getParentId());
         student1.setUserId(student.getUserId());
         student1.setDob(student.getDob());
         student1.setfName(student.getfName());
@@ -56,7 +56,7 @@ public class StudentDaoImpl implements StudentDao {
         student1.setlName(student.getlName());
         student1.setmName(student.getmName());
         student1.setPhoto(student.getPhoto());
-        student1.setStudentLoginId(student.getStudentLoginId());
+        student1.setEmail(student.getEmail());
         student1.setStuStandardId(student.getStuStandardId());
         student1.setStuSchoolId(student.getStuSchoolId());
         student1.setUserId(student.getUserId());
@@ -83,7 +83,7 @@ public class StudentDaoImpl implements StudentDao {
     }
 
     @Override
-    public Student getStudentUsingStudentId(int id) {
+    public Student getStudentUsingStudentId(long id) {
         EntityManager em = DbCon.getEntityManager();
         Query ui =  em.createQuery("select c from Student c where c.studentId="+id);
         em.clear();
@@ -94,9 +94,9 @@ public class StudentDaoImpl implements StudentDao {
     }
 
     @Override
-    public Student getStudentUsingStudentLogin(String login) {
+    public Student getStudentUsingStudentLogin(long login) {
         EntityManager em = DbCon.getEntityManager();
-        Query ui =  em.createQuery("select c from Student c where c.studentLoginId='"+login+"'");
+        Query ui =  em.createQuery("select c from Student c where c.userId="+login);
         em.clear();
         if(ui.getResultList().size()>0)
             return (Student) ui.getResultList().get(0);
@@ -118,7 +118,7 @@ public class StudentDaoImpl implements StudentDao {
     @Override
     public List<Student> getStudentWithoutParentProfile() {
         EntityManager em = DbCon.getEntityManager();
-        Query ui =  em.createQuery("select c from Student c where c.parentLoginId is null or c.parentLoginId='' order by c.fName desc");
+        Query ui =  em.createQuery("select c from Student c where c.parentId is null or c.parentId='' order by c.fName desc");
         em.clear();
         if(ui.getResultList().size()>0)
             return ui.getResultList();

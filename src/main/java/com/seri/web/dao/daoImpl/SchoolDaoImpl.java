@@ -1,13 +1,14 @@
 package com.seri.web.dao.daoImpl;
 
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+
 import com.seri.web.dao.SchoolDao;
 import com.seri.web.model.School;
 import com.seri.web.utils.DbCon;
 import com.seri.web.utils.GlobalFunUtils;
-
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import java.util.List;
 
 /**
  * Created by puneet on 23/04/16.
@@ -37,7 +38,7 @@ public class SchoolDaoImpl implements SchoolDao {
             em.getTransaction().begin();
             School school1 = em.find(School.class, school.getSchoolId());
             school1.setSchoolName(school.getSchoolName());
-            school1.setPrincipalUserLogin(school.getPrincipalUserLogin());
+            school1.setPrincipal(school.getPrincipal());
             school1.setSchoolAddress(school.getSchoolAddress());
             school1.setSchoolContact(school.getSchoolContact());
             school1.setSchoolEmail(school.getSchoolEmail());
@@ -72,9 +73,9 @@ public class SchoolDaoImpl implements SchoolDao {
     }
 
     @Override
-    public School getSchoolUsingPrincipalEmail(String emailId) {
+    public School getSchoolUsingPrincipal(long principalId) {
         EntityManager em = DbCon.getEntityManager();
-        Query ui =  em.createQuery("select c from School c where c.principalUserLogin='"+emailId+"'");
+        Query ui =  em.createQuery("select c from School c where c.principal="+principalId);
         em.clear();
         if(ui.getResultList().size()>0)
             return (School) ui.getResultList().get(0);
@@ -184,7 +185,7 @@ public class SchoolDaoImpl implements SchoolDao {
     @Override
     public List<School> getSchoolwithoutPrincipal() {
         EntityManager em = DbCon.getEntityManager();
-        Query ui =  em.createQuery("select c from School c where c.status!=3 and (c.principalUserLogin is null or c.principalUserLogin='')");
+        Query ui =  em.createQuery("select c from School c where c.status!=3 and (c.principal is null or c.principal='')");
         em.clear();
         if(ui.getResultList().size()>0)
             return ui.getResultList();
@@ -195,7 +196,7 @@ public class SchoolDaoImpl implements SchoolDao {
     @Override
     public List<School> getActiveSchools() {
         EntityManager em = DbCon.getEntityManager();
-        Query ui =  em.createQuery("select c from School c where c.status=1 and c.principalUserLogin!=''");
+        Query ui =  em.createQuery("select c from School c where c.status=1 and c.principal!=''");
         em.clear();
         if(ui.getResultList().size()>0)
             return ui.getResultList();

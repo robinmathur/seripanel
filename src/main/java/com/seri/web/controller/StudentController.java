@@ -1,20 +1,40 @@
 package com.seri.web.controller;
 
-import com.seri.web.dao.*;
-import com.seri.web.dao.daoImpl.*;
-import com.seri.web.model.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import com.seri.web.utils.GlobalFunUtils;
-import com.sun.org.apache.xpath.internal.operations.Bool;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.seri.service.notification.RoleType;
+import com.seri.web.dao.ParentsDao;
+import com.seri.web.dao.SchoolDao;
+import com.seri.web.dao.StudentDao;
+import com.seri.web.dao.SubjectDao;
+import com.seri.web.dao.TeacherDao;
+import com.seri.web.dao.UserDao;
+import com.seri.web.dao.daoImpl.ParentsDaoImpl;
+import com.seri.web.dao.daoImpl.SchoolDaoImpl;
+import com.seri.web.dao.daoImpl.StudentDaoImpl;
+import com.seri.web.dao.daoImpl.SubjectDaoImpl;
+import com.seri.web.dao.daoImpl.TeacherDaoImpl;
+import com.seri.web.dao.daoImpl.UserDaoImpl;
+import com.seri.web.model.Parents;
+import com.seri.web.model.School;
+import com.seri.web.model.Student;
+import com.seri.web.model.Subject;
+import com.seri.web.model.Teacher;
+import com.seri.web.model.User;
+import com.seri.web.utils.CalendarUtil;
+import com.seri.web.utils.LoggedUserUtil;
 
 /**
  * Created by puneet on 22/05/16.
@@ -23,7 +43,6 @@ import java.util.Map;
 @RequestMapping(value = "student")
 public class StudentController {
 
-    private GlobalFunUtils globalFunUtils = new GlobalFunUtils();
     private SchoolDao schoolDao = new SchoolDaoImpl();
     private UserDao userDao = new UserDaoImpl();
     private ParentsDao parentsDao = new ParentsDaoImpl();
@@ -31,11 +50,15 @@ public class StudentController {
     private SubjectDao subjectDao = new SubjectDaoImpl();
     private TeacherDao teacherDao = new TeacherDaoImpl();
 
+    @Autowired
+    GlobalFunUtils globalFunUtils;
+
     @RequestMapping(value = "/dashboard**", method = RequestMethod.GET)
     public ModelAndView dashboardPage(HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
-        User sessUser = globalFunUtils.getLoggedInUserDetail();
-        Student student = studentDao.getStudentUsingStudentLogin(sessUser.getLogin());
+        globalFunUtils.getNotification(model);
+
+        Student student = studentDao.getStudentUsingStudentId(LoggedUserUtil.getUserId());
         List<Subject> subjectList = subjectDao.getSubjectByStandardId(student.getStuStandardId());
         model.addObject("subjectList", subjectList);
         model.setViewName("student/dashboard");
@@ -45,7 +68,7 @@ public class StudentController {
     @RequestMapping(value = "/manage**", method = RequestMethod.GET)
     public ModelAndView manageStudentPage(HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
-        User sessUser = globalFunUtils.getLoggedInUserDetail();
+        globalFunUtils.getNotification(model);
         model.setViewName("student/manage_student");
         return model;
     }
@@ -58,7 +81,6 @@ public class StudentController {
         int offset = 0;
         String retHtml = "";
 
-        User sessUser = globalFunUtils.getLoggedInUserDetail();
         List<Student> studentList = null;
         List<Student> countStudentList = null;
         Map<String, Integer> params = new HashMap<String, Integer>();
@@ -76,14 +98,14 @@ public class StudentController {
 
         int schoolId = 0;
 
-        if(sessUser.getRole().equals("ROLE_SUP_ADMIN")) {
+        if(LoggedUserUtil.hasRole(RoleType.ROLE_SUB_ADMIN)) {
             if(request.getParameter("schoolid") != null && Integer.valueOf(request.getParameter("schoolid"))>0) {
                 params.put("schoolid", Integer.valueOf(request.getParameter("schoolid")));
                 schoolId = Integer.valueOf(request.getParameter("schoolid"));
             }
 
-        } else if(sessUser.getRole().equals("ROLE_SCHOOL_ADMIN")) {
-            School school = schoolDao.getSchoolUsingPrincipalEmail(sessUser.getLogin());
+        } else if(LoggedUserUtil.hasRole(RoleType.ROLE_SCHOOL_ADMIN)) {
+            School school = schoolDao.getSchoolUsingPrincipal(LoggedUserUtil.getUserId());
             params.put("schoolid", school.getSchoolId());
             schoolId = school.getSchoolId();
         }
@@ -114,11 +136,11 @@ public class StudentController {
             for (Student student:studentList) {
                 retHtml+="<tr><td></td>";
                 retHtml+="<td>"+student.getfName()+" "+student.getlName() + " <em>( "+student.getMobNo()+" )</em></td>";
-                retHtml+="<td>"+student.getStudentLoginId()+"</td>";
+                retHtml+="<td>"+student.getEmail()+"</td>";
                 retHtml+="<td>"+student.getApplicationNo()+"</td>";
                 retHtml+="<td>"+student.getStuStandardId()+"</td>";
                 retHtml+="<td>"+student.getAddress()+"<br>"+student.getState()+" "+student.getCity()+"<br>"+student.getCountry()+"</td>";
-                retHtml+="<td>"+parentProfileLink(student.getParentLoginId(), p, rpp, schoolId)+"</td>";
+                retHtml+="<td>"+parentProfileLink(student.getParentId(), p, rpp, schoolId)+"</td>";
                 retHtml+="<td>"+"<a href=\"/student/update?id="+student.getStudentId()+"&p="+p+"&rpp="+rpp+"\" class=\"editStudent\"><span class=\"icon-edit\"></span></a></td>";
                 retHtml+="</tr>";
             }
@@ -149,20 +171,19 @@ public class StudentController {
     String getStudentSelectCtrl(HttpServletRequest request) {
         String retHtml = "";
 
-        User sessUser = globalFunUtils.getLoggedInUserDetail();
         List<Student> studentList = null;
         Map<String, Integer> params = new HashMap<String, Integer>();
 
-        if(sessUser.getRole().equals("ROLE_SUP_ADMIN")) {
+        if(LoggedUserUtil.hasRole(RoleType.ROLE_SUB_ADMIN)) {
             if(request.getParameter("schoolid") != null && Integer.valueOf(request.getParameter("schoolid"))>0) {
                 params.put("schoolid", Integer.valueOf(request.getParameter("schoolid")));
             }
 
-        } else if(sessUser.getRole().equals("ROLE_SCHOOL_ADMIN")) {
-            School school = schoolDao.getSchoolUsingPrincipalEmail(sessUser.getLogin());
+        } else if(LoggedUserUtil.hasRole(RoleType.ROLE_SCHOOL_ADMIN)) {
+            School school = schoolDao.getSchoolUsingPrincipal(LoggedUserUtil.getUserId());
             params.put("schoolid", school.getSchoolId());
-        } else if(sessUser.getRole().equals("ROLE_TEACHER")) {
-            Teacher teacher = teacherDao.getTeacherUsingLoginId(sessUser.getUserId());
+        } else if(LoggedUserUtil.hasRole(RoleType.ROLE_TEACHER)) {
+            Teacher teacher = teacherDao.getTeacherUsingLoginId(LoggedUserUtil.getUserId());
             params.put("schoolid", teacher.getTeacherSchoolId());
             if(request.getParameter("standardid")==null) {
                 params.put("standardid", 0);
@@ -192,8 +213,7 @@ public class StudentController {
     @RequestMapping(value = "/update**", method = RequestMethod.GET)
     public ModelAndView updateTeacher(HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
-        User sessUser = globalFunUtils.getLoggedInUserDetail();
-
+        globalFunUtils.getNotification(model);
         if(request.getParameter("id") == null)
             return new ModelAndView("redirect:manage_student");
 
@@ -203,14 +223,14 @@ public class StudentController {
         if(studentProfile==null)
             return new ModelAndView("redirect:manage_student");
 
-        if(sessUser.getRole().equals("ROLE_SCHOOL_ADMIN")) {
-            School tempSchool = schoolDao.getSchoolUsingPrincipalEmail(sessUser.getLogin());
+        if(LoggedUserUtil.hasRole(RoleType.ROLE_SCHOOL_ADMIN)) {
+            School tempSchool = schoolDao.getSchoolUsingPrincipal(LoggedUserUtil.getUserId());
             if(tempSchool.getSchoolId() != studentProfile.getStuSchoolId()) {
                 return new ModelAndView("redirect:manage_student");
             }
         }
 
-        User userForm = userDao.getUserUsingEmail(studentProfile.getStudentLoginId());
+        User userForm = userDao.getUserUsingEmail(studentProfile.getEmail());
 
         model.addObject("userForm", userForm);
         model.addObject("studentForm", studentProfile);
@@ -222,30 +242,28 @@ public class StudentController {
 
     public Boolean addUpdate(Student student) {
         Boolean flag = false;
-        String dateTime = globalFunUtils.getDateTime();
-        User sessUser = globalFunUtils.getLoggedInUserDetail();
-        student.setLastUpdatedBy(sessUser.getLogin());
-        student.setLastUpdatedDate(dateTime);
+        student.setLastUpdatedBy(LoggedUserUtil.getUserId());
+        student.setLastUpdatedDate(CalendarUtil.getDate());
 
         Student tempDetails = studentDao.getStudentUsingStudentId(student.getStudentId());
         if(tempDetails != null)
         {
-            student.setStudentLoginId(tempDetails.getStudentLoginId());
+            student.setEmail(tempDetails.getEmail());
             student.setCreatedBy(tempDetails.getCreatedBy());
             student.setCreatedDate(tempDetails.getCreatedDate());
-            student.setParentLoginId(tempDetails.getParentLoginId());
+            student.setParentId(tempDetails.getParentId());
             studentDao.update(student);
         } else {
-            student.setCreatedDate(dateTime);
-            student.setCreatedBy(sessUser.getLogin());
+            student.setCreatedDate(CalendarUtil.getDate());
+            student.setCreatedBy(LoggedUserUtil.getUserId());
             studentDao.create(student);
         }
         return flag;
     }
 
-    private String parentProfileLink(String loginId, int p, int rpp, int schoolId){
-        if(loginId!=null && loginId!="") {
-            Parents parents = parentsDao.getProfileUsingLoginId(loginId);
+    private String parentProfileLink(long loginId, int p, int rpp, int schoolId){
+        if(loginId != 0) {
+            Parents parents = parentsDao.getProfileUsingParentsId(loginId);
             if (parents != null) {
                 String fNo = "--", mNo = "--";
                 if (parents.getfMobNo() != null && parents.getfMobNo() != "" && !parents.getfMobNo().equals("0"))
@@ -253,7 +271,7 @@ public class StudentController {
                 if (parents.getmMobNo() != null && parents.getmMobNo() != "" && !parents.getmMobNo().equals("0"))
                     mNo = parents.getmMobNo();
 
-                String aTxt = parents.getfName() + " " + parents.getmName() + " " + parents.getlName() + " <br>Father No: " + fNo + " // Mother No: " + mNo + "<br>Email Id: "+parents.getParentLoginId();
+                String aTxt = parents.getfName() + " " + parents.getmName() + " " + parents.getlName() + " <br>Father No: " + fNo + " // Mother No: " + mNo + "<br>Email Id: "+parents.getEmail();
 
                 return "<a href='/parents/update/?id=" + parents.getParentId() + "&p="+ p +"&rpp="+rpp+"&cid="+schoolId+"'>" + aTxt + "</a>";
             }

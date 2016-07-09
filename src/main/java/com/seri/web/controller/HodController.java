@@ -1,19 +1,39 @@
 package com.seri.web.controller;
 
-import com.seri.web.dao.*;
-import com.seri.web.dao.daoImpl.*;
-import com.seri.web.model.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import com.seri.web.utils.GlobalFunUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.seri.service.notification.RoleType;
+import com.seri.web.dao.DepartmentDao;
+import com.seri.web.dao.HodDao;
+import com.seri.web.dao.SchoolDao;
+import com.seri.web.dao.StudentDao;
+import com.seri.web.dao.TeacherDao;
+import com.seri.web.dao.UserDao;
+import com.seri.web.dao.daoImpl.DepartmentDaoImpl;
+import com.seri.web.dao.daoImpl.HodDaoImpl;
+import com.seri.web.dao.daoImpl.SchoolDaoImpl;
+import com.seri.web.dao.daoImpl.StudentDaoImpl;
+import com.seri.web.dao.daoImpl.TeacherDaoImpl;
+import com.seri.web.dao.daoImpl.UserDaoImpl;
+import com.seri.web.model.Department;
+import com.seri.web.model.Hod;
+import com.seri.web.model.School;
+import com.seri.web.model.Teacher;
+import com.seri.web.model.User;
+import com.seri.web.utils.CalendarUtil;
+import com.seri.web.utils.LoggedUserUtil;
 
 /**
  * Created by puneet on 24/05/16.
@@ -21,7 +41,6 @@ import java.util.Map;
 @Controller
 @RequestMapping(value = "hod")
 public class HodController {
-    private GlobalFunUtils globalFunUtils = new GlobalFunUtils();
     private SchoolDao schoolDao = new SchoolDaoImpl();
     private UserDao userDao = new UserDaoImpl();
     private StudentDao studentDao = new StudentDaoImpl();
@@ -29,10 +48,13 @@ public class HodController {
     private HodDao hodDao = new HodDaoImpl();
     private DepartmentDao departmentDao = new DepartmentDaoImpl();
 
+    @Autowired
+    private GlobalFunUtils globalFunUtils;
+
     @RequestMapping(value = "/manage**", method = RequestMethod.GET)
     public ModelAndView manageHodPage(HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
-        User sessUser = globalFunUtils.getLoggedInUserDetail();
+        globalFunUtils.getNotification(model);
         model.setViewName("hod/manage_hod");
         return model;
     }
@@ -45,7 +67,6 @@ public class HodController {
         int offset = 0;
         String retHtml = "";
 
-        User sessUser = globalFunUtils.getLoggedInUserDetail();
         List<Hod> hodList = null;
         List<Hod> countHodList = null;
         Map<String, Integer> params = new HashMap<String, Integer>();
@@ -64,14 +85,14 @@ public class HodController {
 
         int schoolId = 0;
 
-        if(sessUser.getRole().equals("ROLE_SUP_ADMIN")) {
+        if(LoggedUserUtil.hasRole(RoleType.ROLE_SUB_ADMIN)) {
             if(request.getParameter("schoolid") != null) {
                 params.put("schoolid", Integer.valueOf(request.getParameter("schoolid")));
                 schoolId = Integer.valueOf(request.getParameter("schoolid"));
             }
 
-        } else if(sessUser.getRole().equals("ROLE_SCHOOL_ADMIN")) {
-            School school = schoolDao.getSchoolUsingPrincipalEmail(sessUser.getLogin());
+        } else if(LoggedUserUtil.hasRole(RoleType.ROLE_SCHOOL_ADMIN)) {
+            School school = schoolDao.getSchoolUsingPrincipal(LoggedUserUtil.getUserId());
             params.put("schoolid", school.getSchoolId());
             schoolId = school.getSchoolId();
         }
@@ -105,7 +126,7 @@ public class HodController {
                 }
                 retHtml+="<tr><td></td>";
                 retHtml+="<td>"+hod.getfName()+" "+hod.getlName() + "</td>";
-                retHtml+="<td>"+hod.getHodLoginId()+"</td>";
+                retHtml+="<td>"+hod.getEmail()+"</td>";
                 retHtml+="<td>"+depName+"</td>";
                 retHtml+="<td>"+hod.getHodAddress()+"</td>";
                 retHtml+="<td><a href='/teacher/manage/?schoolid="+schoolId+"&departmentid="+hod.getHodDepartmentId()+"'>Teacher Count: "+countHodListTemp.size()+"</a></td>";
@@ -137,8 +158,7 @@ public class HodController {
     @RequestMapping(value = "/update**", method = RequestMethod.GET)
     public ModelAndView updateHod(HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
-        User sessUser = globalFunUtils.getLoggedInUserDetail();
-
+        globalFunUtils.getNotification(model);
         if(request.getParameter("id") == null)
             return new ModelAndView("redirect:manage_hod");
 
@@ -148,19 +168,19 @@ public class HodController {
         if(hodProfile==null)
             return new ModelAndView("redirect:manage_hod");
 
-        if(sessUser.getRole().equals("ROLE_SCHOOL_ADMIN")) {
-            School tempSchool = schoolDao.getSchoolUsingPrincipalEmail(sessUser.getLogin());
+        if(LoggedUserUtil.hasRole(RoleType.ROLE_SCHOOL_ADMIN)) {
+            School tempSchool = schoolDao.getSchoolUsingPrincipal(LoggedUserUtil.getUserId());
             if(tempSchool.getSchoolId()!=hodProfile.getHodSchoolId()) {
                 return new ModelAndView("redirect:manage_hod");
             }
-        } else if(sessUser.getRole().equals("ROLE_HOD")) {
-            Hod tempHod = hodDao.getHodByLoginId(sessUser.getLogin());
+        } else if(LoggedUserUtil.hasRole(RoleType.ROLE_HOD)) {
+            Hod tempHod = hodDao.getHodByUserId(LoggedUserUtil.getUserId());
             if(tempHod.getHodSchoolId()!=hodProfile.getHodSchoolId() || tempHod.getHodDepartmentId()!=hodProfile.getHodDepartmentId()) {
                 return new ModelAndView("redirect:manage_hod");
             }
         }
 
-        User userForm = userDao.getUserUsingEmail(hodProfile.getHodLoginId());
+        User userForm = userDao.getUserUsingEmail(hodProfile.getEmail());
 
         model.addObject("userForm", userForm);
         model.addObject("hodForm", hodProfile);
@@ -172,27 +192,25 @@ public class HodController {
 
     public Boolean addUpdate(Hod hod) {
         Boolean flag = false;
-        String dateTime = globalFunUtils.getDateTime();
-        User sessUser = globalFunUtils.getLoggedInUserDetail();
-        hod.setLastUpdatedBy(sessUser.getLogin());
-        hod.setLastUpdatedDate(dateTime);
+        hod.setLastUpdatedBy(LoggedUserUtil.getUserId());
+        hod.setLastUpdatedDate(CalendarUtil.getDate());
 
         Hod tempDetails = hodDao.getHodByHodId(hod.getHodId());
         if(tempDetails != null)
         {
-            if(sessUser.getRole().equals("ROLE_HOD")) {
+            if(LoggedUserUtil.hasRole(RoleType.ROLE_HOD)) {
                 hod.setHodSchoolId(tempDetails.getHodSchoolId());
                 hod.setHodDepartmentId(tempDetails.getHodDepartmentId());
             }
             hod.setHodUserId(tempDetails.getHodUserId());
-            hod.setHodLoginId(tempDetails.getHodLoginId());
+            hod.setEmail(tempDetails.getEmail());
             hod.setCreatedBy(tempDetails.getCreatedBy());
             hod.setCreatedDate(tempDetails.getCreatedDate());
             hod.setGender(tempDetails.getGender());
             hodDao.update(hod);
         } else {
-            hod.setCreatedDate(dateTime);
-            hod.setCreatedBy(sessUser.getLogin());
+            hod.setCreatedDate(CalendarUtil.getDate());
+            hod.setCreatedBy(LoggedUserUtil.getUserId());
             hodDao.create(hod);
         }
         return flag;
