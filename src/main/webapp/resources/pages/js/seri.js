@@ -591,14 +591,10 @@ var syllabus = {
         });
     },
     fetchStandardCurrentSyllabus: function(moduleId,schoolId,standardId,subjectId,placeCtrlId){
-        $.ajax({
-            url: "/syllabus/findlatestsyllabus/",
-            method: "GET",
-            data: {moduleId:moduleId, schoolId:schoolId, standardId: standardId, subjectId: subjectId},
-            async: false,
-            dataType:'json',
-            success: function(result) {
-                if(result.result==true){
+        $.getJSON( "/syllabus/findlatestsyllabus/", {moduleId:moduleId, schoolId:schoolId, standardId: standardId, subjectId: subjectId} )
+            .done(function( result ) {
+                //alert( "JSON Data: " + result.dueDate );
+                if(result.result=="true"){
                     tinymce.activeEditor.setContent(result.content);
                     $("#syllabusDueDate").val(result.dueDate);
                     $(".stdform").attr("action", "/syllabus/editsyllabus");
@@ -615,8 +611,13 @@ var syllabus = {
                         $(".student-evaludation-container").slideUp();
                     }
                 }
-            }
-        });
+            })
+            .fail(function( jqxhr, textStatus, error ) {
+                var err = textStatus + ", " + error;
+                alert( "Request Failed: " + err );
+            });
+
+
     }
 };
 
@@ -670,7 +671,8 @@ var utils = {
         });
     },
 
-    multiValuePreSelect: function(ctrlId, val){alert(ctrlId);$("#teacherStandardId option[value=2]").prop("selected", true);
+    multiValuePreSelect: function(ctrlId, val){
+        $("#teacherStandardId option[value=2]").prop("selected", true);
         var multiPreValTemp = val.split(",");
         multiPreValTemp=multiPreValTemp.filter(function(v){return v!==''});
         $.each(multiPreValTemp, function(i,e){
@@ -704,7 +706,7 @@ var rating = {
     },
     createRatingAjax: function(params){
         var ratingParams = $.parseJSON(params)
-        alert(ratingParams);
+        //alert(ratingParams);
         $.ajax({
             url: "/rating/addrating/",
             method: "GET",
@@ -716,6 +718,21 @@ var rating = {
                     $("h4.title-success").slideUp().remove();
                 }, 5000);
             }
+        });
+    },
+
+    studentListing: function(){
+        $(document).on("change", "#customSubjectId", function(){
+            var standardId = $("option:selected", this).attr("data-standard-id");
+            var subjectId = $(this).val();
+            $.getJSON( "/syllabus/getStudentWork/", {standardId: standardId, subjectId: subjectId} )
+                .done(function( result ) {
+                    //var retHtml =
+                })
+                .fail(function( jqxhr, textStatus, error ) {
+                    var err = textStatus + ", " + error;
+                    alert( "Request Failed: " + err );
+                });
         });
     }
 };

@@ -12,7 +12,7 @@
             <div class="par control-group ${emailErrClass}">
                 <label for="login" class="control-label">Email Id</label>
                 <div class="controls">
-                    <input type="text" class="span4 " id="login" name="login" readonly="readonly" value="${userForm.login}" placeholder="Enter Email Id">
+                    <%--<input type="text" class="span4 " id="login" name="login" readonly="readonly" value="${userForm.login}" placeholder="Enter Email Id">--%>
                     <span class="help-inline">${emailErrrrMsg}</span>
                 </div>
             </div><!--par-->

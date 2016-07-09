@@ -193,6 +193,11 @@ public class TaskController {
             taskForm.setSchoolId(teacher.getTeacherSchoolId());
         }
 
+        if(LoggedUserUtil.hasRole(RoleType.ROLE_STUDENT)){
+            Student student = studentDao.getStudentUsingStudentId(LoggedUserUtil.getUserId());
+            taskForm.setStudentId(student.getStudentId());
+        }
+
         taskForm.setModuleId(0);
         taskForm.setCreatedBy(LoggedUserUtil.getUserId());
         taskForm.setCreatedDate(CalendarUtil.getDate());
@@ -281,6 +286,7 @@ public class TaskController {
         Subject subject = subjectDao.getSubjectBySubjectId(Long.parseLong(subjectId));
         model.addObject("subjectForm", subject);
         model.addObject("syllabusList", syllabus);
+        model.addObject("formAction", "/tasks/addtask/");
 
         model.setViewName("tasks/view");
         return model;
@@ -327,5 +333,28 @@ public class TaskController {
         }
 
         return obj.toString();
+    }
+
+    @RequestMapping(value = "/taskrating**", method = RequestMethod.GET)
+    public ModelAndView taskRatingPage(HttpServletRequest request) {
+        ModelAndView model = new ModelAndView();
+        globalFunUtils.getNotification(model);
+        long schoolId = 0;
+        long standardId = 0;
+        long subjectId = 0;
+        long moduleId = 0;
+        String taskName="";
+        if (LoggedUserUtil.hasRole(RoleType.ROLE_TEACHER)) {
+            Teacher teacher = teacherDao.getTeacherUsingLoginId(LoggedUserUtil.getUserId());
+            schoolId = teacher.getTeacherSchoolId();
+            String tempStandardId = teacher.getTeacherStandardId();
+            tempStandardId = tempStandardId.substring(1, tempStandardId.length() - 1);
+            if (request.getParameter("standardid") != null){
+                standardId = Long.parseLong(request.getParameter("standardid"));
+            }
+            model.addObject("tempStandardId", tempStandardId);
+        }
+        model.setViewName("tasks/rating");
+        return model;
     }
 }
