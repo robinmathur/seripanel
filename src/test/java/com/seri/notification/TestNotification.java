@@ -32,7 +32,7 @@ public class TestNotification {
 	NotificationService notificationService;
 	
 
-	@Test
+//	@Test
 //	@Ignore
 	public void createEntityNotification(){
 		notificationService.createNotification(sampleNotification());
@@ -66,7 +66,7 @@ public class TestNotification {
 		notification.setCreatedDate(CalendarUtil.getDate());
 		return notification;
 	}
-	@Test
+//	@Test
 //	@Ignore
 	public User asampleUser(){
 		/*Role role = new Role();
@@ -82,7 +82,7 @@ public class TestNotification {
 		return user;*/
 		
 		UserDaoImpl dao = new UserDaoImpl();
-		User user = dao.loadUserByUsername("robmathur");
+		User user = dao.loadUserByUsername("teacher@gmail.com");
 		Role role = user.getDefaultRole();
 		return user;
 		

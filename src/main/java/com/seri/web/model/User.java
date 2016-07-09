@@ -10,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
@@ -86,17 +87,18 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "ENABLED")
     private boolean enabled = true;
     
-    @OneToMany(mappedBy="primaryKey.user", cascade=CascadeType.ALL)
+    @OneToMany(mappedBy="primaryKey.user", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     private List<UserRoles> userRoles = new ArrayList<UserRoles>();
 
     
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		if(null == authorities){
-			List<Role> authorities  = new ArrayList<Role>();
+			authorities  = new ArrayList<Role>();
 			for(UserRoles userRole : userRoles){
 				authorities.add(userRole.getRole());
 			}
+			
 		}
 		return authorities;
 	}

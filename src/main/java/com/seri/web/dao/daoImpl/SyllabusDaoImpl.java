@@ -1,12 +1,12 @@
 package com.seri.web.dao.daoImpl;
 
-import com.seri.web.dao.SyllabusDao;
-import com.seri.web.model.School;
-import com.seri.web.model.Standard;
-import com.seri.web.model.Syllabus;
-import com.seri.web.utils.DbCon;
-import com.seri.web.utils.GlobalFunUtils;
-import com.sun.org.apache.xpath.internal.operations.Bool;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -15,10 +15,12 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
+
+import com.seri.web.dao.SyllabusDao;
+import com.seri.web.dto.RatingTask;
+import com.seri.web.model.Syllabus;
+import com.seri.web.utils.DbCon;
+import com.seri.web.utils.GlobalFunUtils;
 
 /**
  * Created by puneet on 29/05/16.
@@ -306,6 +308,22 @@ public class SyllabusDaoImpl implements SyllabusDao {
             return resultList;
         else
             return null;
+    }
+    
+    public List<RatingTask> getWorkFromSyllabus(long standardId, long subjectId){
+    	EntityManager em = DbCon.getEntityManager();
+//    	String query = "select new com.seri.web.dto.RatingTask(s.studentId,s.fName,r.id, r.rate, r.outof, sy.content)  "+
+//    	"from Student s LEFT JOIN Syllabus sy ON s.studentId=sy.studentId LEFT JOIN Rating r ON r.entityId=sy.taskId where s.stuStandardId=:standardId and sy.subjectId=:subjectId";
+    	String query = "select s.student_id as studentID,s.f_name as studentName, r.id as rateId, r.rate as rate, r.outof as outof, sy.content as content   from student s left join syllabus sy on s.student_id=sy.student_id left join rating r on r.entity=sy.task_id"+
+    	" where s.standard_id=:standardId and sy.subject_Id=:subjectId";
+    	Query q= em.createNativeQuery(query);
+    	/*TypedQuery<RatingTask> typedQuery = em.createQuery(query, RatingTask.class);
+    	typedQuery.setParameter("standardId", standardId);
+    	typedQuery.setParameter("subjectId", subjectId);*/
+    	q.setParameter("standardId", standardId);
+    	q.setParameter("subjectId", subjectId);
+    	List<RatingTask> results = q.getResultList();
+    	return results;
     }
 }
 
