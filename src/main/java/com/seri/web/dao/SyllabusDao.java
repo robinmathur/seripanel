@@ -1,5 +1,6 @@
 package com.seri.web.dao;
 
+import com.seri.web.dto.RatingTask;
 import com.seri.web.model.Syllabus;
 
 import java.util.List;
@@ -29,4 +30,6 @@ public interface SyllabusDao {
     public Syllabus getSyllabusBySyllabusFilters(Map<String, String> params);
 
     public List<Syllabus> getSyllabusListBySyllabusFilters(Map<String, String> params);
+    
+    public List<RatingTask> getWorkFromSyllabus(long standardId, long subjectId);
 }

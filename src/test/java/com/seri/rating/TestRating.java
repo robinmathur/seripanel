@@ -53,6 +53,7 @@ public class TestRating {
 	
 	
 	@Test
+	@Ignore
 	public void testBUpdateRating(){
 		int record = ratingService.update(tempRate.getId(), 4, 7);
 		assertEquals(1, record);
@@ -62,6 +63,7 @@ public class TestRating {
 	}
 	
 	@Test
+	@Ignore
 	public void testCDeleteRating(){
 		int record = ratingService.deleteRatingForEntity(tempRate.getEntityId());
 		assertEquals(1, record);
