@@ -80,7 +80,7 @@ public class UriController {
     @RequestMapping(value = "/login**", method = RequestMethod.GET)
     public ModelAndView loginPage() {
         ModelAndView model = new ModelAndView();
-        globalFunUtils.getNotification(model);
+        //globalFunUtils.getNotification(model);
         model.setViewName("login");
         return model;
     }

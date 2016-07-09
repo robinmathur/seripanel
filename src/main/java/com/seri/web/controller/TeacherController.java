@@ -48,6 +48,7 @@ public class TeacherController {
     @RequestMapping(value = "/dashboard**", method = RequestMethod.GET)
     public ModelAndView dashboardPage(HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
+
         globalFunUtils.getNotification(model);
         /*Student student = studentDao.getStudentUsingStudentLogin(sessUser.getLogin());
         List<Subject> subjectList = subjectDao.getSubjectByStandardId(student.getStuStandardId());
