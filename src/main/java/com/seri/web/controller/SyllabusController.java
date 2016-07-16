@@ -1,5 +1,6 @@
 package com.seri.web.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +15,7 @@ import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -303,9 +305,9 @@ public class SyllabusController {
         return obj.toJSONString();
     }
     @RequestMapping(value="/getStudentWork", method=RequestMethod.GET)
-    public @ResponseBody String getStudentWork(long standardId, long subjectId){
+    public String getStudentWork(long standardId, long subjectId, Model model){
     	List<RatingTask> ratingTaskList = syllabusDao.getWorkFromSyllabus(standardId, subjectId);
-    	String result = new Gson().toJson(ratingTaskList);
-    	return result;
+    	model.addAttribute("ratingTaskList", ratingTaskList);
+    	return "studentwork";
     }
 }

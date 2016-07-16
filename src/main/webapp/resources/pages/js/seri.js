@@ -698,11 +698,9 @@ var rating = {
                 });
             });
         }
+        
 
-        $(document).on("click", ".student-rate-a", function(e){
-
-            e.preventDefault();
-        });
+        
     },
     createRatingAjax: function(params){
         var ratingParams = $.parseJSON(params)
@@ -720,19 +718,61 @@ var rating = {
             }
         });
     },
-
+    
     studentListing: function(){
+    	$(document).on("change", "#standardId", function(){
+    		$("#dataTable").html("");
+    		$("#customSubjectId").val("0");
+    	});
+    	
         $(document).on("change", "#customSubjectId", function(){
-            var standardId = $("option:selected", this).attr("data-standard-id");
+            var standardId = $("#standardId").val();
             var subjectId = $(this).val();
-            $.getJSON( "/syllabus/getStudentWork/", {standardId: standardId, subjectId: subjectId} )
-                .done(function( result ) {
-                    //var retHtml =
-                })
-                .fail(function( jqxhr, textStatus, error ) {
-                    var err = textStatus + ", " + error;
-                    alert( "Request Failed: " + err );
+//            var dataUrl = "/syllabus/getStudentWork/?standardId="+standardId+"&subjectId="+subjectId;
+//            $('#dyntable').dataTable( {
+//            	  "ajaxSource": dataUrl,
+//            	  "columns": [
+//            	    { "data": "studentName" },
+//            	    { "data": "taskType" },
+//            	    { "data": "taskType" },
+//            	    { "data": "rate" },
+//            	    { "data": "outof" }
+//            	  ]
+//            	} );
+            $.ajax({
+                url: "/syllabus/getStudentWork/",
+                method: "GET",
+                data: {standardId: standardId, subjectId: subjectId},
+                async: false,
+                success: function(result) {
+                	$('#dataTable').html(result);
+                }
+            });
+            
+            $(document).on("click", ".promptbutton", function(e){
+                e.preventDefault();
+                console.log("Rating updated select");
+                $(this).nextAll().children("span").addClass("blank-rating");
+        		$(this).children("span").removeClass("blank-rating");
+        		$(this).prevAll().children("span").removeClass("blank-rating");
+        		var rateId = $(this).parent().parent().siblings("#rateId").html();
+        		var rate = $(this).children("span").html();
+        		console.log("Rate ID - "+rateId);
+        		console.log("Rate - "+rate);
+        		$.ajax({
+                    url: "/rating/updateRating/"+rateId+"/"+rate,
+                    method: "GET",
+                    async: true,
                 });
+            });
+//            $.getJSON( "/syllabus/getStudentWork/", {standardId: standardId, subjectId: subjectId} )
+//                .done(function( result ) {
+//                	$('#dataTable').html(result);
+//                })
+//                .fail(function( jqxhr, textStatus, error ) {
+//                    var err = textStatus + ", " + error;
+//                    alert( "Request Failed: " + err );
+//                });
         });
     }
 };

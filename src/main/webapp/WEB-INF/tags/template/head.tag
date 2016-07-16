@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/pages/css/style.default.css" type="text/css" />
 
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/pages/css/responsive-tables.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/pages/css/seri.css">
     <script type="text/javascript" src="${pageContext.request.contextPath}/resources/pages/js/jquery-1.9.1.min.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/resources/pages/js/jquery-migrate-1.1.1.min.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/resources/pages/js/jquery-ui-1.9.2.min.js"></script>

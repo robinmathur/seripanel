@@ -10,10 +10,12 @@ import com.seri.web.utils.GlobalFunUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.seri.service.rating.RatingService;
 import com.seri.web.dao.RatingDao;
 import com.seri.web.dao.daoImpl.RatingDaoImpl;
 import com.seri.web.model.Rating;
@@ -27,9 +29,20 @@ import com.seri.web.utils.LoggedUserUtil;
 @RequestMapping(value = "rating")
 public class RatingController {
     private RatingDao ratingDao = new RatingDaoImpl();
+    
+    @Autowired
+    private RatingService ratingService;
 
     @Autowired
     private GlobalFunUtils globalFunUtils;
+    
+    @RequestMapping(value = "/updateRating/{ratingId}/{rate}", method = RequestMethod.GET)
+    public void updateRating(@PathVariable long ratingId, @PathVariable int rate) {
+        try {
+        	ratingService.update(ratingId, rate, LoggedUserUtil.getUserId());
+        } catch (Exception e){
+        }
+    }
 
 
     @RequestMapping(value = "/addrating/", method = RequestMethod.GET)

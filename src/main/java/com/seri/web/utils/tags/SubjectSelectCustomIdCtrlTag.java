@@ -77,7 +77,7 @@ public class SubjectSelectCustomIdCtrlTag extends SimpleTagSupport {
                         standard = standardDao.getStandardById(subject.getStandardId());
                         selectCtrl+="<option value='"+standard.getStandardId()+"' disabled='disabled'> -- Standard :: "+standard.getStandardName()+" -- </option>";
                     }
-                    selectCtrl+="<option value='"+subject.getSubjectId()+"' data-standard-id='"+subject.getStandardId()+"' "+((Integer.parseInt(selectedSubject)==subject.getSubjectId())?"selected='selected'":"")+">"+subject.getSubjectName()+"</option>";
+                    selectCtrl+="<option value='"+subject.getSubjectId()+"' parentid='"+subject.getStandardId()+"' data-standard-id='"+subject.getStandardId()+"' "+((Integer.parseInt(selectedSubject)==subject.getSubjectId())?"selected='selected'":"")+">"+subject.getSubjectName()+"</option>";
                 }
             }
         } catch (Exception e){
