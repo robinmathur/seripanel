@@ -1,10 +1,13 @@
 package com.seri.web.utils.tags;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.seri.web.dao.SchoolDao;
 import com.seri.web.dao.StandardDao;
@@ -21,6 +24,7 @@ public class StandardListTag extends SimpleTagSupport {
     private String ctrlName;
     private String selectedStandard;
     private String multi;
+    private List<String> standardIds;
     private GlobalFunUtils globalFunUtils = new GlobalFunUtils();
     private StandardDao standardDao = new StandardDaoImpl();
     SchoolDao schoolDao = new SchoolDaoImpl();
@@ -36,8 +40,12 @@ public class StandardListTag extends SimpleTagSupport {
     public void setMulti(String multi) {
         this.multi = multi;
     }
+    
+    public void setStandardIds(String standardIds) {
+		this.standardIds = Arrays.asList(StringUtils.split(standardIds, ","));
+	}
 
-    public void doTag() throws IOException {
+	public void doTag() throws IOException {
 //selectedStandard="1";
         if(selectedStandard==null || selectedStandard=="" || Integer.parseInt(selectedStandard)<1)
         {
@@ -49,7 +57,8 @@ public class StandardListTag extends SimpleTagSupport {
             selectCtrl = "<select name='"+ctrlName+"' id='"+ctrlName+"' multiple='multiple'>";
         if(standardList !=null  & standardList.size()>0) {
             for (Standard standard:standardList) {
-                selectCtrl += "<option value='"+standard.getStandardId()+"' "+((Integer.parseInt(selectedStandard)==standard.getStandardId())?"selected='selected'":"")+">"+standard.getStandardName()+"</option>";
+            		if(standardIds != null & standardIds.contains(standard.getStandardId()+""))
+            			selectCtrl += "<option value='"+standard.getStandardId()+"' "+((Integer.parseInt(selectedStandard)==standard.getStandardId())?"selected='selected'":"")+">"+standard.getStandardName()+"</option>";
             }
 
         }

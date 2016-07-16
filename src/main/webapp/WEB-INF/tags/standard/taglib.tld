@@ -21,6 +21,10 @@
             <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
+            <name>standardIds</name>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
             <name>multi</name>
             <rtexprvalue>true</rtexprvalue>
         </attribute>

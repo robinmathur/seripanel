@@ -8,6 +8,7 @@
             <li><a href="/student/manage/">Manage Students</a></li>
             <li><a href="/syllabus/content"><span class="iconfa-laptop"></span> Manage Syllabus</a></li>
             <li><a href="/tasks/content"><span class="iconfa-laptop"></span> Manage Tasks</a></li>
+            <li><a href="/tasks/taskrating"><span class="iconfa-laptop"></span> Manage Submitted Task</a></li>
         </ul>
     </div><!--leftmenu-->
 

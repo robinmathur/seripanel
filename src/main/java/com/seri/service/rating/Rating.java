@@ -2,6 +2,8 @@ package com.seri.service.rating;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
 import com.seri.common.BaseEntity;
@@ -15,6 +17,7 @@ public class Rating extends BaseEntity {
 	@Column(name = "ENTITY")
 	private long entityId;
 	@Column(name = "RATE_TYPE")
+	@Enumerated(EnumType.STRING)
 	private CommonTypes ratingType;
 	@Column(name = "RATE")
 	private int rate;

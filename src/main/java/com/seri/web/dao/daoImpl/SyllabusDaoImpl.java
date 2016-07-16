@@ -25,6 +25,7 @@ import com.seri.web.dto.RatingTask;
 import com.seri.web.model.Syllabus;
 import com.seri.web.utils.DbCon;
 import com.seri.web.utils.GlobalFunUtils;
+import com.seri.web.utils.PropertyUtil;
 
 /**
  * Created by puneet on 29/05/16.
@@ -316,7 +317,7 @@ public class SyllabusDaoImpl implements SyllabusDao {
     
     public List<RatingTask> getWorkFromSyllabus(long standardId, long subjectId){
     	EntityManager em = DbCon.getEntityManager();
-    	String query = "select s.student_id, s.f_name,s.m_name,s.l_name, r.id, r.rate, r.outof, sy.content from student s left join syllabus sy on s.student_id=sy.student_id left join rating r on r.entity=sy.task_id"+
+    	String query = "select s.student_id, s.f_name,s.m_name,s.l_name, r.id, r.rate, r.outof, r.rate_type, sy.content from student s left join syllabus sy on s.student_id=sy.student_id left join rating r on r.entity=sy.task_id"+
     	" where s.standard_id=:standardId and sy.subject_Id=:subjectId";
     	Query q= em.createNativeQuery(query);
     	q.setParameter("standardId", standardId);
@@ -330,7 +331,8 @@ public class SyllabusDaoImpl implements SyllabusDao {
     		rt.setRateId(((BigInteger)oj[4]).longValue());
     		rt.setRate((Integer)oj[5]);
     		rt.setOutOf((Integer)oj[6]);
-    		rt.setContent((String)oj[7]);
+    		rt.setTaskType((String)oj[7]);
+    		rt.setContent((String)oj[8]);
     		ratingTask.add(rt);
     	}
     	return ratingTask;

@@ -15,6 +15,7 @@ import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -304,8 +305,9 @@ public class SyllabusController {
         return obj.toJSONString();
     }
     @RequestMapping(value="/getStudentWork", method=RequestMethod.GET)
-    public @ResponseBody List<RatingTask> getStudentWork(long standardId, long subjectId){
+    public String getStudentWork(long standardId, long subjectId, Model model){
     	List<RatingTask> ratingTaskList = syllabusDao.getWorkFromSyllabus(standardId, subjectId);
-    	return ratingTaskList;
+    	model.addAttribute("ratingTaskList", ratingTaskList);
+    	return "studentwork";
     }
 }

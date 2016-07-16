@@ -204,7 +204,7 @@ public class TaskController {
         taskForm.setLastUpdatedBy(LoggedUserUtil.getUserId());
         taskForm.setLastUpdatedDate(CalendarUtil.getDate());
         syllabusDao.create(taskForm);
-        model.setViewName("redirect:/task/content/?token=success&schoolid="+taskForm.getSchoolId()+"&standardid="+taskForm.getStandardId()+"&subjectid="+taskForm.getSubjectId()+"&taskname="+taskForm.getTaskName());
+        model.setViewName("redirect:/tasks/content/?token=success&schoolid="+taskForm.getSchoolId()+"&standardid="+taskForm.getStandardId()+"&subjectid="+taskForm.getSubjectId()+"&taskname="+taskForm.getTaskName());
         return model;
     }
 
@@ -352,7 +352,11 @@ public class TaskController {
             if (request.getParameter("standardid") != null){
                 standardId = Long.parseLong(request.getParameter("standardid"));
             }
+            if (request.getParameter("standardId") != null){
+                model.addObject("selectedStandard", request.getParameter("standardId"));
+            }
             model.addObject("tempStandardId", tempStandardId);
+            model.addObject("selectedSubject", standardId);
         }
         model.setViewName("tasks/rating");
         return model;

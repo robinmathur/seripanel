@@ -8,11 +8,12 @@ public class RatingTask {
 	private int rate;
 	private int outOf;
 	private String content;
+	private String taskType;
 	
 	public RatingTask(){};
 	
 	
-	public RatingTask(int studenID, String studentName, long rateId, int rate, int outOf, String content) {
+	public RatingTask(int studenID, String studentName, long rateId, int rate, int outOf, String content, String taskType) {
 		super();
 		this.studenID = studenID;
 		this.studentName = studentName;
@@ -20,6 +21,7 @@ public class RatingTask {
 		this.rate = rate;
 		this.outOf = outOf;
 		this.content = content;
+		this.taskType =taskType;
 	}
 
 
@@ -58,6 +60,14 @@ public class RatingTask {
 	}
 	public void setContent(String content) {
 		this.content = content;
+	}
+
+	public String getTaskType() {
+		return taskType;
+	}
+
+	public void setTaskType(String taskType) {
+		this.taskType = taskType;
 	}
 
 }

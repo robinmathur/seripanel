@@ -133,7 +133,6 @@ public class SubjectDaoImpl implements SubjectDao {
     @Override
     public List<Subject> getSubjectListUsingInId(String ids) {
         try {
-            int inArr[] = {1,2,3};
             EntityManager em = DbCon.getEntityManager();
             Query ui = em.createQuery("select c from Subject c where c.entityName='subject' and c.subjectId in ("+ids+") order by c.standardId asc");
             em.clear();
@@ -142,6 +141,7 @@ public class SubjectDaoImpl implements SubjectDao {
             else
                 return null;
         } catch (Exception e) {
+        	e.printStackTrace();
             return null;
         }
     }
