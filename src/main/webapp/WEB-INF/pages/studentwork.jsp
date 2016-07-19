@@ -16,7 +16,7 @@
             <th class="head1">Task Name</th>
             <th class="head0">View Task Details</th>
             <th  hidden="true">rateID</th>
-            <th class="head1">Max Rating</th>
+            <th class="head1">Comment</th>
             <th class="head0">Assign Rating</th>
         </tr>
         </thead>
@@ -26,9 +26,9 @@
 	            <td class="aligncenter"><span class="center"><input type="checkbox" /></span></td>
 	            <td>${ratetask.studentName}</td>
 	            <td>${ratetask.taskType}</td>
-	            <td><a href="#">View Task Details</a></td>
+	            <td><a class="syllabusContent" data-toggle="modal" data-id="${ratetask.syllabusId}" href="#syllabusContent">View Task Details</a></td>
 	            <td id="rateId" hidden="true">${ratetask.rateId}</td>
-	            <td class="center">${ratetask.outOf}</td>
+	            <td class="center">${ratetask.comment}</td>
 	            <td class="center"><span class="field" id="rating">
 	            			<c:if test="${ratetask.rate == 0 }">
 		                        <a href="#" class="student-rate-a promptbutton"> <span class="badge badge-important blank-rating">1</span></a>

@@ -67,7 +67,8 @@
 
             <p>
                 <label>Due Date</label>
-                <span class="field"><input type="text" name="taskDueDate" id="syllabusDueDate" value="${syllabusForm.taskDueDate}" class="input-large" placeholder=".input-xlarge" /></span>
+                <fmt:formatDate value="${syllabusForm.taskDueDate}" pattern="yyyy-MM-dd" var="taskDueDate" />
+                <span class="field"><input type="text" name="taskDueDate" id="syllabusDueDate" value="${taskDueDate}" class="input-large date-field" placeholder="Enter Date" /></span>
             </p>
         </div>
 

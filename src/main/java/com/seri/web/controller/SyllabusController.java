@@ -1,6 +1,5 @@
 package com.seri.web.controller;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -8,27 +7,30 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.seri.service.notification.Notification;
-import com.seri.service.notification.NotificationService;
-import com.seri.web.utils.GlobalFunUtils;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.google.gson.Gson;
+import com.seri.common.CommonTypes;
 import com.seri.common.Gender;
 import com.seri.common.GenderPropertyEditorSupport;
 import com.seri.common.MyCustomNumberEditor;
 import com.seri.common.RoleTypePropertyEditorSupport;
+import com.seri.service.notification.NotificatiobServiceAdaptor;
+import com.seri.service.notification.NotificationService;
 import com.seri.service.notification.RoleType;
 import com.seri.web.dao.HodDao;
 import com.seri.web.dao.ParentsDao;
@@ -53,6 +55,7 @@ import com.seri.web.model.Subject;
 import com.seri.web.model.Syllabus;
 import com.seri.web.model.Teacher;
 import com.seri.web.utils.CalendarUtil;
+import com.seri.web.utils.GlobalFunUtils;
 import com.seri.web.utils.LoggedUserUtil;
 
 /**
@@ -174,7 +177,7 @@ public class SyllabusController {
         }
 
         if(LoggedUserUtil.hasRole(RoleType.ROLE_TEACHER)){
-            Teacher teacher = teacherDao.getTeacherUsingTeacherId(LoggedUserUtil.getUserId());
+            Teacher teacher = teacherDao.getTeacherUsingLoginId(LoggedUserUtil.getUserId());
             syllabusForm.setSchoolId(teacher.getTeacherSchoolId());
         }
 
@@ -185,6 +188,9 @@ public class SyllabusController {
         syllabusForm.setTaskName("syllabus");
         globalFunUtils.getNotification(model);
         syllabusDao.create(syllabusForm);
+        CommonTypes taskType = syllabusForm.getTaskName() == "home_work" ? CommonTypes.HOME_WORK : CommonTypes.CLASS_WORK;
+        NotificatiobServiceAdaptor.createGroupNotification(taskType, RoleType.ROLE_STUDENT,2,syllabusForm.getSchoolId(),syllabusForm.getStudentId());
+        NotificatiobServiceAdaptor.createGroupNotification(taskType, RoleType.ROLE_PARENT,2,syllabusForm.getSchoolId(),syllabusForm.getStudentId());
         model.setViewName("redirect:content?token=success&schoolid="+syllabusForm.getSchoolId()+"&standardid="+syllabusForm.getStandardId()+"&subjectid="+syllabusForm.getSubjectId()+"&moduleid="+syllabusForm.getModuleId());
         return model;
     }
@@ -293,7 +299,7 @@ public class SyllabusController {
                     obj.put("result", true);
                     obj.put("id", syllabus.getTaskId());
                     obj.put("content", syllabus.getContent());
-                    obj.put("dueDate", syllabus.getTaskDueDate());
+                    obj.put("dueDate", CalendarUtil.getSystemDateFormat().format(syllabus.getTaskDueDate()));
                 } else {
                     obj.put("result", false);
                 }
@@ -309,5 +315,17 @@ public class SyllabusController {
     	List<RatingTask> ratingTaskList = syllabusDao.getWorkFromSyllabus(standardId, subjectId);
     	model.addAttribute("ratingTaskList", ratingTaskList);
     	return "studentwork";
+    }
+    
+    @RequestMapping(value="/getAll", method=RequestMethod.GET)
+    public @ResponseBody List<Syllabus> getSyllabusByFilter(@RequestParam Map<String, String> filterParam){
+    	List<Syllabus> syllabusList = syllabusDao.getSyllabusListBySyllabusFilters(filterParam);
+    	return syllabusList;
+    }
+    
+    @RequestMapping(value="/syllabuscontent/{syllabusId}", method=RequestMethod.GET)
+    public @ResponseBody String getSyllabusById(@PathVariable("syllabusId") int syllabusId){
+    	Syllabus syllabus = syllabusDao.getSyllabusBySyllabusId(syllabusId);
+    	return syllabus.getContent();
     }
 }

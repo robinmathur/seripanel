@@ -1,7 +1,13 @@
 /**
  * Created by puneet on 18/04/16.
  */
+
+
 var $ = jQuery.noConflict();
+
+$(function(){
+	$(".date-field").datepicker({dateFormat:"yy-mm-dd"});
+});
 
 var email = {
     deleteMail: function(){
@@ -562,6 +568,8 @@ var syllabus = {
             }
             //e.preventDefault();
         });
+        
+        
     },
     standardCustomPreSelect: function(moduleId){
         var tempStandardId = parseInt($("#customSubjectId").children("option:selected").val());
@@ -725,6 +733,12 @@ var rating = {
     		$("#customSubjectId").val("0");
     	});
     	
+    	$(document).on("click", ".syllabusContent", function(e){
+        	e.preventDefault();
+            var syllabusId = $(this).attr("data-id");
+            $("#syllabusContent").find(".modal-body").load("/syllabus/syllabuscontent/"+syllabusId);
+        });
+    	
         $(document).on("change", "#customSubjectId", function(){
             var standardId = $("#standardId").val();
             var subjectId = $(this).val();
@@ -775,6 +789,8 @@ var rating = {
 //                });
         });
     }
+    
+    
 };
 
 var tasks={

@@ -11,7 +11,6 @@
 
 <script>
     $(document).ready(function(){
-    	$( ".date-field" ).datepicker({dateFormat:"yy-mm-dd"});
         syllabus.content();
         utils.schoolSubsSelector("standardId", "subjectIdContainer", "subjectId", "subjectId", "subjectId", "${subjectId}");
         tasks.schoolChange();tasks.standardChange();tasks.subjectChange();tasks.taskNameChange();tasks.teacherCustomSubjectChange();

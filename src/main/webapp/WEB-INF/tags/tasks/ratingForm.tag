@@ -38,6 +38,18 @@ rating.studentListing();
 </form>
 
 <div id="dataTable"></div>
-    
+
+<div aria-hidden="false" aria-labelledby="syllabusContent" role="dialog" tabindex="-1" class="modal hide fade in" id="syllabusContent">
+    <div class="modal-header">
+        <button aria-hidden="true" data-dismiss="modal" class="close" type="button">&times;</button>
+        <h3 id="myModalLabel" class="addUpdateSubTitle">Add Subject</h3>
+    </div>
+    <div class="msg-container"></div>
+    <div class="modal-body">
+    </div>
+    <div class="modal-footer">
+        <button data-dismiss="modal" class="btn">Close</button>
+    </div>
+</div>
 
 </div></div>
