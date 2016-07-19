@@ -6,14 +6,15 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.seri.web.utils.GlobalFunUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.seri.service.rating.RatingService;
 import com.seri.web.dao.RatingDao;
@@ -33,10 +34,8 @@ public class RatingController {
     @Autowired
     private RatingService ratingService;
 
-    @Autowired
-    private GlobalFunUtils globalFunUtils;
-    
     @RequestMapping(value = "/updateRating/{ratingId}/{rate}", method = RequestMethod.GET)
+    @ResponseStatus(value=HttpStatus.OK)
     public void updateRating(@PathVariable long ratingId, @PathVariable int rate) {
         try {
         	ratingService.update(ratingId, rate, LoggedUserUtil.getUserId());

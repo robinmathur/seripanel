@@ -317,7 +317,7 @@ public class SyllabusDaoImpl implements SyllabusDao {
     
     public List<RatingTask> getWorkFromSyllabus(long standardId, long subjectId){
     	EntityManager em = DbCon.getEntityManager();
-    	String query = "select s.student_id, s.f_name,s.m_name,s.l_name, r.id, r.rate, r.outof, r.rate_type, sy.content from student s left join syllabus sy on s.student_id=sy.student_id left join rating r on r.entity=sy.task_id"+
+    	String query = "select s.student_id, s.f_name,s.m_name,s.l_name, r.id, r.rate, r.outof, r.rate_type, r.comment, sy.task_id from student s left join syllabus sy on s.student_id=sy.student_id left join rating r on r.entity=sy.task_id"+
     	" where s.standard_id=:standardId and sy.subject_Id=:subjectId";
     	Query q= em.createNativeQuery(query);
     	q.setParameter("standardId", standardId);
@@ -332,7 +332,8 @@ public class SyllabusDaoImpl implements SyllabusDao {
     		rt.setRate((Integer)oj[5]);
     		rt.setOutOf((Integer)oj[6]);
     		rt.setTaskType((String)oj[7]);
-    		rt.setContent((String)oj[8]);
+    		rt.setComment((String)oj[8]);
+    		rt.setSyllabusId(((Integer)oj[9]).longValue());
     		ratingTask.add(rt);
     	}
     	return ratingTask;

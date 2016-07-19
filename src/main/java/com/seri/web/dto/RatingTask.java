@@ -9,11 +9,13 @@ public class RatingTask {
 	private int outOf;
 	private String content;
 	private String taskType;
+	private String comment;
+	private long syllabusId;
 	
 	public RatingTask(){};
 	
 	
-	public RatingTask(int studenID, String studentName, long rateId, int rate, int outOf, String content, String taskType) {
+	public RatingTask(int studenID, String studentName, long rateId, int rate, int outOf, String content, String taskType, String comment, long syllabusId) {
 		super();
 		this.studenID = studenID;
 		this.studentName = studentName;
@@ -22,6 +24,8 @@ public class RatingTask {
 		this.outOf = outOf;
 		this.content = content;
 		this.taskType =taskType;
+		this.comment = comment;
+		this.syllabusId = syllabusId;
 	}
 
 
@@ -70,4 +74,22 @@ public class RatingTask {
 		this.taskType = taskType;
 	}
 
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+
+
+	public long getSyllabusId() {
+		return syllabusId;
+	}
+
+	public void setSyllabusId(long syllabusId) {
+		this.syllabusId = syllabusId;
+	}
+	
 }

@@ -46,7 +46,7 @@
             <div class="par control-group">
                 <label for="dob" class="control-label">Date of Birth</label>
                 <div class="controls">
-                    <input type="text" class="span4" id="dob" name="dob" value="${userForm.dob}" placeholder="Enter Date of Birth">
+                    <input type="text" class="span4 date-field" id="dob" name="dob" value="${userForm.dob}" placeholder="Enter Date of Birth">
                     <span class="help-inline"></span>
                 </div>
             </div><!--par-->
