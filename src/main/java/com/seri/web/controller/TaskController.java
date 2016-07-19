@@ -204,7 +204,14 @@ public class TaskController {
         taskForm.setLastUpdatedBy(LoggedUserUtil.getUserId());
         taskForm.setLastUpdatedDate(CalendarUtil.getDate());
         syllabusDao.create(taskForm);
-        model.setViewName("redirect:/tasks/content/?token=success&schoolid="+taskForm.getSchoolId()+"&standardid="+taskForm.getStandardId()+"&subjectid="+taskForm.getSubjectId()+"&taskname="+taskForm.getTaskName());
+
+        if(LoggedUserUtil.hasRole(RoleType.ROLE_STUDENT)){
+            model.setViewName("redirect:/tasks/viewtask/?&subjectid="+taskForm.getSubjectId()+"&taskname="+taskForm.getTaskName()+"&taskSubmission=success");
+        } else {
+            model.setViewName("redirect:/tasks/content/?token=success&schoolid="+taskForm.getSchoolId()+"&standardid="+taskForm.getStandardId()+"&subjectid="+taskForm.getSubjectId()+"&taskname="+taskForm.getTaskName());
+        }
+
+
         return model;
     }
 
