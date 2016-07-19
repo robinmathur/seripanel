@@ -296,10 +296,10 @@ public class SyllabusController {
                 params.put("studentId", "0");
                 Syllabus syllabus = syllabusDao.getSyllabusBySyllabusFilters(params);
                 if(syllabus != null) {
-                    obj.put("result", true);
-                    obj.put("id", syllabus.getTaskId());
-                    obj.put("content", syllabus.getContent());
-                    obj.put("dueDate", CalendarUtil.getSystemDateFormat().format(syllabus.getTaskDueDate()));
+                    obj.put("result", "true");
+                    obj.put("id", ""+syllabus.getTaskId()+"");
+                    obj.put("content", ""+syllabus.getContent()+"");
+                    obj.put("dueDate", ""+CalendarUtil.getSystemDateFormat().format(syllabus.getTaskDueDate())+"");
                 } else {
                     obj.put("result", false);
                 }
