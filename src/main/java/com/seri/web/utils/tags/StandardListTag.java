@@ -40,7 +40,8 @@ public class StandardListTag extends SimpleTagSupport {
     }
     
     public void setStandardIds(String standardIds) {
-		this.standardIds = Arrays.asList(StringUtils.split(standardIds, ","));
+    	if(!StringUtils.isBlank(standardIds))
+    		this.standardIds = Arrays.asList(StringUtils.split(standardIds, ","));
 	}
 
 	public void doTag() throws IOException {
@@ -54,8 +55,12 @@ public class StandardListTag extends SimpleTagSupport {
             selectCtrl = "<select name='"+ctrlName+"' id='"+ctrlName+"' multiple='multiple'>";
         if(standardList !=null  && standardList.size()>0) {
             for (Standard standard:standardList) {
-            		//if(standardIds != null && standardIds.contains(standard.getStandardId()+""))
-            			selectCtrl += "<option value='"+standard.getStandardId()+"' "+((Integer.parseInt(selectedStandard)==standard.getStandardId())?"selected='selected'":"")+">"+standard.getStandardName()+"</option>";
+            	if(standardIds != null){
+            		if(standardIds.contains(standard.getStandardId()))
+            				selectCtrl += "<option value='"+standard.getStandardId()+"' "+((Integer.parseInt(selectedStandard)==standard.getStandardId())?"selected='selected'":"")+">"+standard.getStandardName()+"</option>";
+            	}else{
+            		selectCtrl += "<option value='"+standard.getStandardId()+"' "+((Integer.parseInt(selectedStandard)==standard.getStandardId())?"selected='selected'":"")+">"+standard.getStandardName()+"</option>";
+            	}
             }
 
         }
