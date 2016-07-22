@@ -235,7 +235,7 @@ public class UriController {
         }
         else if(LoggedUserUtil.hasRole(RoleType.ROLE_STUDENT))
         {
-            Student studentProfile = studentDao.getStudentUsingStudentId(LoggedUserUtil.getUserId());
+            Student studentProfile = studentDao.getStudentUsingStudentLogin(LoggedUserUtil.getUserId());
             model.addObject("studentForm", studentProfile);
             model.addObject("formAction", "studentUpdate");
         }

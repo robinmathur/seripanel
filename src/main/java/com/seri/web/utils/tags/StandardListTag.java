@@ -23,6 +23,7 @@ public class StandardListTag extends SimpleTagSupport {
     private String ctrlName;
     private String selectedStandard;
     private String multi;
+    private String disabled;
     private List<String> standardIds;
     private StandardDao standardDao = new StandardDaoImpl();
     SchoolDao schoolDao = new SchoolDaoImpl();
@@ -39,7 +40,15 @@ public class StandardListTag extends SimpleTagSupport {
         this.multi = multi;
     }
     
-    public void setStandardIds(String standardIds) {
+    public String getDisabled() {
+		return disabled;
+	}
+
+	public void setDisabled(String disabled) {
+		this.disabled = disabled;
+	}
+
+	public void setStandardIds(String standardIds) {
     	if(!StringUtils.isBlank(standardIds))
     		this.standardIds = Arrays.asList(StringUtils.split(standardIds, ","));
 	}
