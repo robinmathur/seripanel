@@ -19,17 +19,20 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
 
+import com.seri.common.CommonTypes;
 import com.seri.web.dao.SyllabusDao;
 import com.seri.web.dto.RatingTask;
 import com.seri.web.model.Syllabus;
+import com.seri.web.utils.CalendarUtil;
 import com.seri.web.utils.DbCon;
 import com.seri.web.utils.GlobalFunUtils;
-import com.seri.web.utils.PropertyUtil;
 
 /**
  * Created by puneet on 29/05/16.
  */
+@Service("syllabusDao")
 public class SyllabusDaoImpl implements SyllabusDao {
 
     private GlobalFunUtils globalFunUtils = new GlobalFunUtils();
@@ -202,7 +205,7 @@ public class SyllabusDaoImpl implements SyllabusDao {
         }
 
         if(params.containsKey("taskName") && params.get("taskName") != null) {
-            p = criteriaBuilder.equal(syllabusRoot.get("taskName"), params.get("taskName"));
+            p = criteriaBuilder.equal(syllabusRoot.get("taskName"), CommonTypes.valueOf(params.get("taskName")));
             predList.add(p);
         }
 
@@ -213,10 +216,10 @@ public class SyllabusDaoImpl implements SyllabusDao {
 
         if(params.containsKey("syllabusDueDate") && params.get("syllabusDueDate") != null) {
 
-            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+//            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
             Date startDate = null;
             try {
-                startDate = df.parse(params.get("syllabusDueDate"));
+                startDate = CalendarUtil.getSystemDateFormat().parse(params.get("syllabusDueDate"));
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -328,12 +331,12 @@ public class SyllabusDaoImpl implements SyllabusDao {
     		RatingTask rt = new RatingTask();
     		rt.setStudenID((Integer)oj[0]);
     		rt.setStudentName((String)oj[1]+" "+(StringUtils.isEmpty((String)oj[2]) ? "" :" ")+(String)oj[3]);
-    		rt.setRateId(((BigInteger)oj[4]).longValue());
+    		rt.setRateId(oj[4] !=null ? ((BigInteger)oj[4]).longValue(): 0);
     		rt.setRate((Integer)oj[5]);
     		rt.setOutOf((Integer)oj[6]);
     		rt.setTaskType((String)oj[7]);
     		rt.setComment((String)oj[8]);
-    		rt.setSyllabusId(((Integer)oj[9]).longValue());
+    		rt.setSyllabusId(oj[9] !=null ? ((BigInteger)oj[9]).longValue(): 0);
     		ratingTask.add(rt);
     	}
     	return ratingTask;

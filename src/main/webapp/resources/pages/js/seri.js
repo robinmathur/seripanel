@@ -763,18 +763,18 @@ var rating = {
                 }
             });
             
-            $(document).on("click", ".promptbutton", function(e){
+            $(document).on("click", "a.student-rate-a", function(e){
                 e.preventDefault();
                 console.log("Rating updated select");
                 $(this).nextAll().children("span").addClass("blank-rating");
         		$(this).children("span").removeClass("blank-rating");
         		$(this).prevAll().children("span").removeClass("blank-rating");
-        		var rateId = $(this).parent().parent().siblings("#rateId").html();
+        		var syllabusId = $(this).parent().parent().siblings().children(".syllabusContent").attr("data-id");
         		var rate = $(this).children("span").html();
-        		console.log("Rate ID - "+rateId);
+        		console.log("SyllabusId ID - "+syllabusId);
         		console.log("Rate - "+rate);
         		$.ajax({
-                    url: "/rating/updateRating/"+rateId+"/"+rate,
+                    url: "/rating/updateRating/"+syllabusId+"/"+rate,
                     method: "GET",
                     async: true,
                 });

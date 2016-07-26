@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.seri.service.rating.RatingService;
+import com.seri.service.SyllabusService;
 import com.seri.web.dao.RatingDao;
 import com.seri.web.dao.daoImpl.RatingDaoImpl;
 import com.seri.web.model.Rating;
@@ -29,16 +29,17 @@ import com.seri.web.utils.LoggedUserUtil;
 @Controller
 @RequestMapping(value = "rating")
 public class RatingController {
+	
     private RatingDao ratingDao = new RatingDaoImpl();
     
     @Autowired
-    private RatingService ratingService;
+    private SyllabusService syllabusService;
 
-    @RequestMapping(value = "/updateRating/{ratingId}/{rate}", method = RequestMethod.GET)
+    @RequestMapping(value = "/updateRating/{syllabusId}/{rate}", method = RequestMethod.GET)
     @ResponseStatus(value=HttpStatus.OK)
-    public void updateRating(@PathVariable long ratingId, @PathVariable int rate) {
+    public void updateRating(@PathVariable long syllabusId, @PathVariable int rate) {
         try {
-        	ratingService.update(ratingId, rate, LoggedUserUtil.getUserId());
+        	syllabusService.updateSyllabusRating(syllabusId, rate, LoggedUserUtil.getUserId());
         } catch (Exception e){
         }
     }

@@ -5,10 +5,14 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import com.seri.common.CommonTypes;
 
 /**
  * Created by puneet on 29/05/16.
@@ -22,7 +26,8 @@ public class Syllabus implements Serializable {
     @Column(name = "TASK_ID")
     private long taskId;
     @Column(name = "TASK_NAME")
-    private String taskName;
+    @Enumerated(EnumType.STRING)
+    private CommonTypes taskName;
     @Column(name = "SUBJECT_ID")
     private int subjectId;
     @Column(name = "SCHOOL_ID")
@@ -56,11 +61,11 @@ public class Syllabus implements Serializable {
         this.taskId = taskId;
     }
 
-    public String getTaskName() {
+    public CommonTypes getTaskName() {
         return taskName;
     }
 
-    public void setTaskName(String taskName) {
+    public void setTaskName(CommonTypes taskName) {
         this.taskName = taskName;
     }
 
