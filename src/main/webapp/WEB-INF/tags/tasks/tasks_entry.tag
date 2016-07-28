@@ -62,7 +62,7 @@
                 <label>Select Task Type</label>
                 <span class="field" id="">
                     <select name="taskName" id="taskName">
-                        <option value="">--Select Task Type--</option>
+                        <option value="">Make a selection</option>
                         <option value="CLASS_WORK">Class Work</option>
                         <option value="HOME_WORK">Home Work</option>
                     </select>

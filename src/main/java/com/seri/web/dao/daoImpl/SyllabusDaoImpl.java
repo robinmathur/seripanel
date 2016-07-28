@@ -6,6 +6,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -81,7 +82,7 @@ public class SyllabusDaoImpl implements SyllabusDao {
     }
 
     @Override
-    public Syllabus getSyllabusBySyllabusId(int id) {
+    public Syllabus getSyllabusBySyllabusId(long id) {
         try {
             EntityManager em = DbCon.getEntityManager();
             Query ui = em.createQuery("select c from Syllabus c where c.taskId="+id);
@@ -318,13 +319,18 @@ public class SyllabusDaoImpl implements SyllabusDao {
             return null;
     }
     
-    public List<RatingTask> getWorkFromSyllabus(long standardId, long subjectId){
+    public List<RatingTask> getWorkFromSyllabus(long standardId, long subjectId, Date taskDate){
     	EntityManager em = DbCon.getEntityManager();
-    	String query = "select s.student_id, s.f_name,s.m_name,s.l_name, r.id, r.rate, r.outof, r.rate_type, r.comment, sy.task_id from student s left join syllabus sy on s.student_id=sy.student_id left join rating r on r.entity=sy.task_id"+
-    	" where s.standard_id=:standardId and sy.subject_Id=:subjectId";
+    	/*String query = "select s.student_id, s.f_name,s.m_name,s.l_name, r.id, r.rate, r.outof, r.rate_type, r.comment, sy.task_id from student s left join syllabus sy on s.student_id=sy.student_id left join rating r on r.entity=sy.task_id"+
+    	" where s.standard_id=:standardId and sy.subject_Id=:subjectId";*/
+    	String query = "select s.student_id, s.f_name,s.m_name,s.l_name, coalesce(r.id,0) rate_id, coalesce(r.rate,0) rate, coalesce(r.outof,0) rate_outof, "+
+    			"coalesce(st.task_name,'') task_name, coalesce(r.comment,'') rate_comment, st.task_id "+
+    			"from syllabus st inner join Student s on s.student_id=st.student_id left join rating  r on r.entity=st.task_id "+
+    			"where st.pid in (select task_id from syllabus sy where sy.standard_id =:standardId and sy.subject_id=:subjectId and date(sy.created_date) = :taskDate and sy.pid =0)";
     	Query q= em.createNativeQuery(query);
     	q.setParameter("standardId", standardId);
     	q.setParameter("subjectId", subjectId);
+    	q.setParameter("taskDate", taskDate);
     	List<Object[]> results = q.getResultList();
     	List<RatingTask> ratingTask = new ArrayList<RatingTask>();
     	for(Object[] oj : results){
@@ -332,8 +338,8 @@ public class SyllabusDaoImpl implements SyllabusDao {
     		rt.setStudenID((Integer)oj[0]);
     		rt.setStudentName((String)oj[1]+" "+(StringUtils.isEmpty((String)oj[2]) ? "" :" ")+(String)oj[3]);
     		rt.setRateId(oj[4] !=null ? ((BigInteger)oj[4]).longValue(): 0);
-    		rt.setRate((Integer)oj[5]);
-    		rt.setOutOf((Integer)oj[6]);
+    		rt.setRate(((BigInteger)oj[5]).intValue());
+    		rt.setOutOf(((BigInteger)oj[6]).intValue());
     		rt.setTaskType((String)oj[7]);
     		rt.setComment((String)oj[8]);
     		rt.setSyllabusId(oj[9] !=null ? ((BigInteger)oj[9]).longValue(): 0);
@@ -341,6 +347,27 @@ public class SyllabusDaoImpl implements SyllabusDao {
     	}
     	return ratingTask;
     }
+
+	@Override
+	public Syllabus getParentSyllabus(long id) {
+		EntityManager em = DbCon.getEntityManager();
+		Query q= em.createQuery("select syp from Syllabus syp, Syllabus syp1 where syp.taskId = syp1.pid and syp1.taskId=:task_id");
+    	q.setParameter("task_id", id);
+    	Syllabus syllabus = (Syllabus) q.getSingleResult();
+		return syllabus;
+	}
+
+	@Override
+	public Map<String, Long> getParentStudentBySyllabus(long syllabusId) {
+		EntityManager em = DbCon.getEntityManager();
+		Query q= em.createNativeQuery("select coalesce(s.parent,0),coalesce(s.student_id,0)  from syllabus sy inner join student s on s.student_id=sy.student_id where sy.task_id=:syllabusId");
+    	q.setParameter("syllabusId", syllabusId);
+    	Object[] result= (Object[]) q.getSingleResult();
+    	Map<String, Long> parentStudentIds =  new HashMap<String, Long>();
+    	parentStudentIds.put("parent", (Long)result[0]);
+    	parentStudentIds.put("student", (Long)result[1]);
+    	return parentStudentIds;
+	}
 }
 
 

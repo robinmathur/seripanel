@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.seri.common.CommonTypes;
+import com.seri.common.StatusEnum;
 
 /**
  * Created by puneet on 29/05/16.
@@ -52,6 +53,9 @@ public class Syllabus implements Serializable {
     private long lastUpdatedBy;
     @Column(name = "LAST_UPDATED_DATE")
     private Date lastUpdatedDate;
+    @Column(name = "STATUS")
+    @Enumerated(EnumType.STRING)
+    private StatusEnum status; 
 
     public long getTaskId() {
         return taskId;
@@ -164,4 +168,14 @@ public class Syllabus implements Serializable {
     public void setLastUpdatedDate(Date lastUpdatedDate) {
         this.lastUpdatedDate = lastUpdatedDate;
     }
+
+	public StatusEnum getStatus() {
+		return status;
+	}
+
+	public void setStatus(StatusEnum status) {
+		this.status = status;
+	}
+    
+    
 }

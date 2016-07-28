@@ -310,8 +310,8 @@ public class SyllabusController {
         return obj.toJSONString();
     }
     @RequestMapping(value="/getStudentWork", method=RequestMethod.GET)
-    public String getStudentWork(long standardId, long subjectId, Model model){
-    	List<RatingTask> ratingTaskList = syllabusDao.getWorkFromSyllabus(standardId, subjectId);
+    public String getStudentWork(long standardId, long subjectId, Date taskDate, Model model){
+    	List<RatingTask> ratingTaskList = syllabusDao.getWorkFromSyllabus(standardId, subjectId, taskDate);
     	model.addAttribute("ratingTaskList", ratingTaskList);
     	return "studentwork";
     }

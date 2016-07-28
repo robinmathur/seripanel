@@ -41,6 +41,7 @@
                                     <fmt:formatDate value="${myDate}" var="startFormat" pattern="yyyy-MM-dd"/>
                                     ${startFormat}
                                 </small>
+                                <span>${notification.desc}</span>
                             </a>
                         </li>
                     </c:forEach>
