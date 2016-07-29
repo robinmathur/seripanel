@@ -37,7 +37,7 @@ public class Notification extends BaseEntity implements Serializable,Comparable<
 	private RoleType linkedEntityRole;
 	@Column(name="DUE_DATE")
 	private Date dueDate;
-	@Column(name="description")
+	@Column(name="DESCRIPTION")
 	private String description;
 
 

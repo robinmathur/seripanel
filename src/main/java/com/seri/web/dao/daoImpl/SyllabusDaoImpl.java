@@ -350,22 +350,31 @@ public class SyllabusDaoImpl implements SyllabusDao {
 
 	@Override
 	public Syllabus getParentSyllabus(long id) {
-		EntityManager em = DbCon.getEntityManager();
-		Query q= em.createQuery("select syp from Syllabus syp, Syllabus syp1 where syp.taskId = syp1.pid and syp1.taskId=:task_id");
-    	q.setParameter("task_id", id);
-    	Syllabus syllabus = (Syllabus) q.getSingleResult();
+		Syllabus syllabus = null;
+		try{
+			EntityManager em = DbCon.getEntityManager();
+			Query q= em.createQuery("select syp from Syllabus syp, Syllabus syp1 where syp.taskId = syp1.pId and syp1.taskId=:task_id");
+	    	q.setParameter("task_id", id);
+	    	syllabus = (Syllabus) q.getSingleResult();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 		return syllabus;
 	}
 
 	@Override
 	public Map<String, Long> getParentStudentBySyllabus(long syllabusId) {
-		EntityManager em = DbCon.getEntityManager();
-		Query q= em.createNativeQuery("select coalesce(s.parent,0),coalesce(s.student_id,0)  from syllabus sy inner join student s on s.student_id=sy.student_id where sy.task_id=:syllabusId");
-    	q.setParameter("syllabusId", syllabusId);
-    	Object[] result= (Object[]) q.getSingleResult();
-    	Map<String, Long> parentStudentIds =  new HashMap<String, Long>();
-    	parentStudentIds.put("parent", (Long)result[0]);
-    	parentStudentIds.put("student", (Long)result[1]);
+		Map<String, Long> parentStudentIds =  new HashMap<String, Long>();
+		try{
+			EntityManager em = DbCon.getEntityManager();
+			Query q= em.createNativeQuery("select coalesce(s.parent,0),coalesce(s.user_id,0)  from syllabus sy inner join student s on s.student_id=sy.student_id where sy.task_id=:syllabusId");
+	    	q.setParameter("syllabusId", syllabusId);
+	    	Object[] result= (Object[]) q.getSingleResult();
+	    	parentStudentIds.put("parent", ((BigInteger)result[0]).longValue());
+	    	parentStudentIds.put("student", ((BigInteger)result[1]).longValue());
+		}catch(Exception e){
+			e.printStackTrace();
+		}
     	return parentStudentIds;
 	}
 }

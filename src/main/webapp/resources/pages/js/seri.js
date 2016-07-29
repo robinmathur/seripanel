@@ -772,7 +772,7 @@ var rating = {
     		$(this).children("span").removeClass("blank-rating");
     		$(this).prevAll().children("span").removeClass("blank-rating");
     		syllabusId = $(this).parent().parent().siblings().children(".syllabusContent").attr("data-id");
-    		ratingComment = $(this).parent().parent().siblings().children("#comment");
+    		ratingComment = $(this);
     		var rate = $(this).children("span").html();
     		console.log("SyllabusId ID - "+syllabusId);
     		console.log("Rate - "+rate);
@@ -783,9 +783,10 @@ var rating = {
             });
     		jPrompt('Enter Comments:<input type="hidden" id="hidSyllabusId" value="'+syllabusId+'"/><textarea style="resize: none; padding-right: 0px !important; overflow: hidden" rows="5" id="popup_prompt"></textarea>','', 'Submit Comments', function(r) {
     				var comments = r;
-    				ratingComment.html(r);
+    				ratingComment.parent().parent().siblings("#comment").html(comments);
     			$.get("/rating/updateRating/"+syllabusId+"/comment/"+comments);
-    			syllabusId = '';
+    			syllabusId = null;
+    			ratingComment = null;
             });
         });
     }
