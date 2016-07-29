@@ -782,9 +782,11 @@ var rating = {
                 async: true,
             });
     		jPrompt('Enter Comments:<input type="hidden" id="hidSyllabusId" value="'+syllabusId+'"/><textarea style="resize: none; padding-right: 0px !important; overflow: hidden" rows="5" id="popup_prompt"></textarea>','', 'Submit Comments', function(r) {
+    			if(r){
     				var comments = r;
     				ratingComment.parent().parent().siblings("#comment").html(comments);
-    			$.get("/rating/updateRating/"+syllabusId+"/comment/"+comments);
+    				$.get("/rating/updateRating/"+syllabusId+"/comment/"+comments);
+    			}
     			syllabusId = null;
     			ratingComment = null;
             });
